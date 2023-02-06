@@ -1,0 +1,10 @@
+{
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+    "workbench.colorTheme": "Dracula",
+    "explorer.confirmDelete": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "git.openRepositoryInParentFolders": "always",
+    "git.autofetch": true,
+    "redhat.telemetry.enabled": true
+}

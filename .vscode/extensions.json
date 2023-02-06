@@ -1,0 +1,10 @@
+{
+    "recommendations": [
+        "akamud.vscode-theme-onedark",
+        "formulahendry.auto-rename-tag",
+        "stackbreak.comment-divider",
+        "dracula-theme.theme-dracula",
+        "ecmel.vscode-html-css",
+        "redhat.vscode-xml"
+    ]
+}

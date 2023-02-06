@@ -1,0 +1,26 @@
+{
+    "manifest_version": 2,
+    "name": "data cifra",
+    "version": "1.0",
+    "homepage_url": "https://github.com/marcusvpires/data-cifras",
+    "description": "Extensão para criar algo como um teleprompt para a leitura de cifras importadas diretamente do cifra club.",
+    "icons": {
+        "48": "media/logo-48.png",
+        "96": "media/logo-96.png"
+    },
+    "permissions": [
+        "activeTab",
+        "*.cifraclub.com.br/*",
+        "tabs"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "*.cifraclub.com.br/*"
+            ],
+            "js": [
+                "content.js"
+            ]
+        }
+    ]
+}
