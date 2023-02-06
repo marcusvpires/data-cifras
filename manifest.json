@@ -19,6 +19,10 @@
             "background.js"
         ]
     },
+    "web_accessible_resources": [
+        "media/logo-48.png",
+        "media/logo-96.png"
+    ],
     "content_scripts": [
         {
             "matches": [

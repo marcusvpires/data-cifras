@@ -1,7 +1,10 @@
 
 const openPage = () => {
     console.log("abrindo página")
-}
+    browser.tabs.create({
+      "url": "/app/index.html"
+    });
+  }
 
 const onError = (err) => console.error(err)
 
