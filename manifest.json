@@ -11,6 +11,7 @@
     "permissions": [
         "activeTab",
         "*://*.cifraclub.com.br/*",
+        "storage",
         "tabs"
     ],
     "background": {
