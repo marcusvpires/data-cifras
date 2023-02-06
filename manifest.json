@@ -13,6 +13,11 @@
         "*://*.cifraclub.com.br/*",
         "tabs"
     ],
+    "background": {
+        "scripts": [
+            "background.js"
+        ]
+    },
     "content_scripts": [
         {
             "matches": [
