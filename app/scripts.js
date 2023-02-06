@@ -110,19 +110,18 @@ const handleToggleTablatura = () => {
 /*                                auto rolagem                                */
 /* -------------------------------------------------------------------------- */
 
-let scrolldelay = 0
+let scrolldelay = 30
 
 
 // loop que executa a rolagem infinita
 const autoScrollLoop = () => {
-    document.querySelector("#cifra").scrollBy(1, 1);
+    window.scrollBy(1, 1);
     if (scrolldelay) setTimeout(autoScrollLoop, scrolldelay);
 }
 
 // função executada ao apertar play ou pause
 const handleToggleAutoScroll = () => {
     const button = document.getElementById("toggleAutoScroll")
-    const direction = document.getElementById("direction")
     if (scrolldelay) {
         button.style.paddingLeft = "0.6rem"
         button.src = "./public/play-button.png"
