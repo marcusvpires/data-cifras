@@ -10,13 +10,13 @@
     },
     "permissions": [
         "activeTab",
-        "*.cifraclub.com.br/*",
+        "*://*.cifraclub.com.br/*",
         "tabs"
     ],
     "content_scripts": [
         {
             "matches": [
-                "*.cifraclub.com.br/*"
+                "*://*.cifraclub.com.br/*"
             ],
             "js": [
                 "content.js"
