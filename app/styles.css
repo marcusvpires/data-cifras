@@ -130,7 +130,7 @@ body {
     cursor: pointer;
 }
 
-.adcionar-a-lista {
+.add-to-list {
     position: absolute;
     right: -15.05rem;
     top: 50%;
@@ -142,129 +142,26 @@ body {
     translate: 0 -50%;
 }
 
-.adcionar-a-lista div {
+.add-to-list div {
     border-radius: 2px;
     padding: 5px;
-    margin: 5px 0;
+    margin: 5px 0 auto;
     cursor: pointer;
 }
 
-.adcionar-a-lista span {
+.add-to-list span {
     margin-left: 10px;
 }
 
-/* -------------------------------------------------------------------------- */
-/*                                   tabela                                   */
-/* -------------------------------------------------------------------------- */
-
-.explorer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #0a0a0ea4;
+.createplaylist {
+	height: 33px !important;
+	background-color: #a191c0;
+	color: black;
+	font-weight: 600;
+	text-align: center;
 }
 
-.tollbar {
-    display: flex;
-    margin: 0px 5px 20px 5px;
-}
-
-.tollbar-button {
-    border-radius: 5px;
-    background-color: red;
-    padding: 5px 10px;
-    margin: 0 5px;
-    cursor: pointer;
-}
-
-.table-container {
-    width: 90%;
+#playlistcontainer {
     overflow: auto;
-    padding: 1rem;
-    background-color: #1c1b1e;
-    box-shadow: 2px 2px 5px #0a090b;
-}
-
-.location-bar {
-    background-color: #0a0a0e;
-    padding: 5px;
-    border-radius: 2px;
-    display: flex;
-    flex-grow: 1;
-}
-
-.location-bar span {
-    margin: 5px;
-}
-
-.return {
-    font-weight: 500;
-    margin-right: 5px;
-    padding: 5px 10px;
-    border-radius: 2px;
-    cursor: pointer;
-    background-color: #0a0a0e;
-    font-size: 17px;
-    display: flex;
-    align-items: center;
-    user-select: none;
-    transition: 100ms;
-}
-
-.return:hover {
-    background-color: #000;
-}
-
-table {
-    border-collapse: collapse;
-    min-width: 100%;
-    margin: 0 auto;
-    padding: 0;
-    table-layout: fixed;
-    background-color: #1c1b1e;
-}
-
-table caption {
-    font-size: 55px;
-    font-weight: 700;
-    color: #00000090;
-    padding: 15px;
-}
-
-.thead {
-    color: #ddd;
-}
-
-table th,
-table td {
-    padding: 5px 10px;
-    white-space: nowrap;
-    text-align: left;
-    user-select: none;
-}
-
-table th {
-    font-size: revert-layer;
-    text-transform: capitalize;
-    font-weight: 500;
-    border-right: 1px solid #5d5a64;
-}
-
-tbody>tr:hover {
-    background-color: #0c0c0c;
-    cursor: pointer;
-}
-
-.selected {
-    background-color: #0c0c0c;
-}
-
-.folder-icon {
-    height: 20px;
-    width: 20px;
+    height: calc(100% - 40px);
 }

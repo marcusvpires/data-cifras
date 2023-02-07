@@ -14,26 +14,12 @@
     <div class="controller" id="controller">
         <button class="toggler" id="toggleController">◂</button>
         <div class="title" style="margin-top: 0rem;">SISTEMA</div>
-        <div id="add-lista" class="config" style="cursor: pointer;">
+        <div id="toggle-add-to-list" class="config" style="cursor: pointer;">
             <span>Adcionar à lista</span>
         </div>
-        <div class="adcionar-a-lista" style="display: none;">
-            <div>
-                <input type="checkbox" name="" id="" checked>
-                rock
-            </div>
-            <div>
-                <input type="checkbox" name="" id="">
-                pop
-            </div>
-            <div>
-                <input type="checkbox" name="" id="">
-                funk
-            </div>
-            <div>
-                <input type="checkbox" name="" id="">
-                sertanejo
-            </div>
+        <div class="add-to-list" style="display: none;">
+            <div id="playlistcontainer"></div>
+            <div id="novaplaylist" class="createplaylist">Nova playlist</div>
         </div>
         <div id="my-lists" class="config" style="cursor: pointer;">
             <span>Minhas listas</span>
@@ -60,60 +46,6 @@
         <input type="range" name="autoScroll" id="scrollSpeed" value="30" min="1" max="201" step="1"
             style="cursor: pointer;">
     </div>
-    <div class="explorer" style="display: none;">
-        <div class="table-container">
-            <div class="tollbar">
-                <div class="tollbar-button" id="delete" style="background-color: #bf2e3c;">Exculir</div>
-                <div class="tollbar-button" id="rename" style="background-color: #0059b8">Renomear</div>
-                <div class="tollbar-button" id="new" style="background-color: #208837;">Novo</div>
-                <div class="tollbar-button" id="close" style="background-color: #bf2e3c; font-weight: 900; margin-left: auto;">X
-                </div>
-            </div>
-            <div id="explorer-url-bar" style="display: flex; margin: 5px 10px 10px; display: none;">
-                <div class="return">↩</div>
-                <div class="location-bar">
-                    <span id="playlist-name"> : Melhores</span>
-                </div>
-            </div>
-            <table>
-                <thead id="explorer-music-head" style="display: none;">
-                    <tr class="thead">
-                        <th scope="col" style="width: 20px;"><input type="checkbox" name="" id=""></th>
-                        <th scope="col">Nome</th>
-                        <th scope="col">Autor</th>
-                        <th scope="col" style="width: 100px;">Data</th>
-                    </tr>
-                </thead>
-                <tbody id="playlist-tbody">
-                    <tr>
-                        <td data-label="Icon" style="width: 20px;">
-                            <img class="folder-icon" src="public/folder.png" alt="" srcset="">
-                        </td>
-                        <td data-label="Name">Rock</td>
-                    </tr>
-                    <tr>
-                        <td data-label="Icon" style="width: 20px;">
-                            <img class="folder-icon" src="public/folder.png" alt="" srcset="">
-                        </td>
-                        <td data-label="Name">Pop</td>
-                    </tr>
-                    <tr>
-                        <td data-label="Icon" style="width: 20px;">
-                            <img class="folder-icon" src="public/folder.png" alt="" srcset="">
-                        </td>
-                        <td data-label="Name">Lonly</td>
-                    </tr>
-                    <tr>
-                        <td data-label="Icon" style="width: 20px;">
-                            <img class="folder-icon" src="public/folder.png" alt="" srcset="">
-                        </td>
-                        <td data-label="Name">Treinar</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
     <div class="cifra" id="cifra"></div>
     <script src="scripts.js"></script>
 </body>

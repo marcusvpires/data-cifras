@@ -1,12 +1,25 @@
-console.log("script carregado")
+/* -------------------------------------------------------------------------- */
+/*                              variáveis globais                             */
+/* -------------------------------------------------------------------------- */
 
-let currentMusic = {
-    ID: undefined,
+// musica aberta no momento
+let target = {
+    id: undefined,
     name: undefined,
-    code: undefined
+    code: undefined,
+    saved: false,
 }
 
+/* -------------------------------------------------------------------------- */
+/*                             funções auxiliares                             */
+/* -------------------------------------------------------------------------- */
+
 const onError = (err) => console.log(err)
+
+const createID = () => {
+    const dt = new Date()
+    return (dt.toTimeString() + dt.getMilliseconds()).replace(/[^A-Z0-9]/ig, "");
+}
 
 // carrega a targetcifra e compila na página 
 const getTargetCifra = () => {
@@ -20,10 +33,14 @@ const getTargetCifra = () => {
         component.contentEditable = true
         component.removeAttribute("xmlns")
         document.querySelector("#cifra").appendChild(component)
-        currentMusic = {
-            ID: createUniqueID(results.targetcifra.title),
-            name: results.targetcifra.title + ';' + results.targetcifra.author,
-            code: results.targetcifra.code
+        const tg = results.targetcifra
+
+        target = {
+            id: createID(),
+            title: tg.title,
+            author: tg.author,
+            code: tg.code,
+            saved: false,
         }
     }, onError);
 }
@@ -41,6 +58,15 @@ const handleToggleController = () => {
         button.innerText = "▸"
     }
 }
+
+const createHTML = (tag, attributes = []) => {
+    const element = document.createElement(tag)
+    attributes.forEach(([name, value]) => {
+        element.setAttribute(name, value)
+    })
+    return element
+}
+
 
 /* -------------------------------------------------------------------------- */
 /*                                configurações                               */
@@ -155,256 +181,97 @@ const handleScrollSpeed = (event) => {
 /*                               banco de dados                               */
 /* -------------------------------------------------------------------------- */
 
-const createUniqueID = (string) => {
-    return (string + new Date().toTimeString() + new Date().getMilliseconds()).replace(/[^A-Z0-9]/ig, "");
-}
+const storage = browser.storage.local
 
-const db = {
-    getAll: (callback = console.log) => {
-        browser.storage.local.get("playlists").then((result) => {
-            let object = {}
-            if (result["playlists"]) object = result["playlists"]
-            callback(object)
-        }, onError)
-    },
-    get: (ID = null, callback = () => { }) => {
-        db.getAll((object) => callback(object[ID]))
-    },
-    set: (object, callback = () => { }) => {
-        browser.storage.local.set({ ["playlists"]: object }).then(callback, onError)
-    },
-    create: (ID, element, callback = () => { }) => {
-        db.getAll((object) => {
-            object[ID] = element
-            db.set(object, callback)
-        })
-    },
-    update: (ID, element, callback = () => { }) => {
-        db.getAll((object) => {
-            object[ID] = { ...object[ID], ...element }
-            db.set(object, callback)
-        })
-    },
-    updateMany: (req, callback = () => { }) => {
-        db.getAll((object) => {
-            Object.entries(req).forEach(([ID, element]) => object[ID] = { ...object[ID], ...element })
-            db.set(object, callback)
-        })
-    },
-    updatePlaylistMusicas: (ID, musicaID, musica, callback = () => { }) => {
-        db.getAll((object) => {
-            if (object[ID].musicas[musicaID]) delete object[ID].musicas[musicaID]
-            else object[ID].musicas[musicaID] = musica
-            db.set(object, callback)
-        })
-    },
-    delete: (ID, callback = () => { }) => {
-        db.getAll((object) => {
-            delete object[ID]
-            db.set(object, callback)
-            callback
-        })
-    },
-    deleteMany: (IDs, callback = () => { }) => {
-        db.getAll((object) => {
-            IDs.forEach(ID => delete object[ID])
-            db.set(object, callback)
-        })
-    }
-}
+/* -------------------------------- playlists ------------------------------- */
 
-/* -------------------------------------------------------------------------- */
-/*                                  explorer                                  */
-/* -------------------------------------------------------------------------- */
+const getPlaylists = (callback) => storage.get("playlists").then((response) => {
+    let playlists = {}
+    if (response.playlists) playlists = response.playlists
+    callback(playlists)
+}, onError)
 
-/* --------------------------------- musicas -------------------------------- */
 
-const musicaDB = {
-    getAll: (callback = console.log) => {
-        browser.storage.local.get("musicas").then((result) => {
-            let object = {}
-            if (result["musicas"]) object = result["musicas"]
-            callback(object)
-        }, onError)
-    },
-    get: (ID = null, callback = () => { }) => {
-        musicaDB.getAll((object) => callback(object[ID]))
-    },
-    set: (object, callback = () => { }) => {
-        browser.storage.local.set({ ["musicas"]: object }).then(callback, onError)
-    },
-    create: (ID, element, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            object[ID] = element
-            musicaDB.set(object, callback)
-        })
-    },
-    update: (ID, element, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            object[ID] = { ...object[ID], ...element }
-            musicaDB.set(object, callback)
-        })
-    },
-    updateMany: (req, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            Object.entries(req).forEach(([ID, element]) => object[ID] = { ...object[ID], ...element })
-            musicaDB.set(object, callback)
-        })
-    },
-    updatePlaylistMusicas: (ID, musicaID, musica, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            if (object[ID].musicas[musicaID]) delete object[ID].musicas[musicaID]
-            else object[ID].musicas[musicaID] = musica
-            musicaDB.set(object, callback)
-        })
-    },
-    delete: (ID, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            delete object[ID]
-            musicaDB.set(object, callback)
-            callback
-        })
-    },
-    deleteMany: (IDs, callback = () => { }) => {
-        musicaDB.getAll((object) => {
-            IDs.forEach(ID => delete object[ID])
-            musicaDB.set(object, callback)
-        })
-    }
-}
-
-/* --------------------------------- playlis -------------------------------- */
-
-const openExplorer = () => {
-    document.querySelector(".explorer").style.display = "flex"
-    updateExplorerPlaylistComponent()
-}
-
-const handleCloseExplorer = () => {
-    document.querySelector(".explorer").style.display = "none"
-}
-
-const openPlaylist = (event) => {
-    let element = event.target
-    while (element.nodeName !== "TR") elment = element.parentNode
-    db.get(element.id, (playlist) => {
-        e
-        document.getElementById("explorer-url-bar").style.display = "block"
-        document.getElementById("explorer-music-head").style.display = "block"
-        document.getElementById("playlist-name").innerText = ": " + playlist.name
+const createPlaylist = (callback) => {
+    const name = window.prompt("Digite o nome da playlists")
+    getPlaylists(playlists => {
+        playlists[createID()] = { name, cifras: {} }
+        storage.set({ "playlists": playlists }).then(callback)
     })
 }
 
-const explorerRowEvent = (event) => {
-    let element = event.target
-    while (element.nodeName !== "TR") element = element.parentNode
-    if (element.className === "selected") element.className = ""
-    else element.className = "selected"
-}
+/* --------------------------------- cifras --------------------------------- */
 
-const createPlaylistTable = (ID, playlist) => {
-    const tr = createHTML("tr", [["id", ID]])
-    const icon = createHTML("td", [["data-label", "icon"], ["style", "width: 20px;"]])
-    icon.appendChild(createHTML("img", [["class", "folder-icon"], ["src", "public/folder.png"]]))
-    tr.appendChild(icon)
-    const name = createHTML("td", [["data-label", "name"]])
-    name.innerText = playlist?.name
-    tr.appendChild(name)
+const getCifras = (callback) => storage.get("cifras").then((response) => {
+    let cifras = {}
+    if (response.cifras) cifras = response.cifras
+    callback(cifras)
+}, onError)
 
-    tr.addEventListener("click", explorerRowEvent)
-    tr.addEventListener("dblclick", openPlaylist)
-    document.getElementById("playlist-tbody").appendChild(tr)
-}
 
-const updateExplorerPlaylistComponent = () => {
-    db.getAll((playlists) => {
-        document.getElementById("playlist-tbody").innerText = ""
-        Object.entries(playlists).map(([ID, playlist]) => createPlaylistTable(ID, playlist))
+const createCifra = () => {
+    getCifras(cifras => {
+        cifras[target.id] = {
+            title: target.title,
+            author: target.author,
+            code: target.code
+        }
+        target.saved = true
+        storage.set({ "cifras": cifras })
     })
 }
 
-const handleDelete = () => {
-    const targets = document.querySelectorAll(".selected")
-    const IDs = []
-    targets.forEach((target) => IDs.push(target.id))
-    db.deleteMany(IDs, updateExplorerPlaylistComponent)
-}
-
-const handleRename = () => {
-    const targets = document.querySelectorAll(".selected")
-    const novoNome = window.prompt("Escreva um novo nome")
-    const object = {}
-    targets.forEach((target, index) => {
-        if (index !== 0) object[target.id] = { name: novoNome + ` (${index})` }
-        else object[target.id] = { name: novoNome }
+const deleteCifra = () => {
+    getCifras(cifras => {
+        delete cifras[target.id]
+        target.saved = false
+        storage.set({ "cifras": cifras })
     })
-    db.updateMany(object, updateExplorerPlaylistComponent)
-}
-
-const handleNew = () => {
-    const name = window.prompt("Digite o nome")
-    db.create(createUniqueID(name), { name: name, musicas: {} }, updateExplorerPlaylistComponent)
-}
-
-const createHTML = (tag, attributes = []) => {
-    const element = document.createElement(tag)
-    attributes.forEach(([name, value]) => {
-        element.setAttribute(name, value)
-    })
-    return element
 }
 
 /* -------------------------------------------------------------------------- */
-/*                           popup adcionar a lista                           */
+/*                              adicionar à lista                             */
 /* -------------------------------------------------------------------------- */
 
-const updateList = (event) => {
-    let element = event.target
-    while (element.nodeName !== "DIV") element = element.parentNode
-    db.updatePlaylistMusicas(element.id, currentMusic.ID, currentMusic.name, updateAddToList)
-}
-
-const constructorAddToList = (playlists) => {
-    console.log("constructorAddToList")
-    const container = document.querySelector(".adcionar-a-lista")
+const constructorAddToList = (list) => {
+    const container = document.getElementById("playlistcontainer")
     container.innerText = ""
-    let anyChecked = false
-    playlists.forEach(([ID, name, checked]) => {
-        const element = createHTML("div", [["id", ID]])
-        const input = createHTML("input", [["type", "checkbox"], ["name", ID]])
-        input.checked = checked
-        if (checked) anyChecked = true
-        const nameElement = createHTML("span")
-        nameElement.innerText = name
-        element.appendChild(input)
-        element.appendChild(nameElement)
-        element.addEventListener("click", updateList)
-        container.appendChild(element)
+
+    list.forEach(playlist => {
+        const component = createHTML("div", [["id", playlist.id]])
+
+        const input = createHTML("input", [["type", "checkbox"], ["name", playlist.id]])
+        input.checked = playlist.contain
+
+        const name = createHTML("span")
+        name.innerText = playlist.name
+
+        component.appendChild(input)
+        component.appendChild(name)
+        component.addEventListener("click", updatePlaylistCifras)
+        container.appendChild(component)
     })
-
-    if (anyChecked) {
-        musicaDB.create(currentMusic.ID, {
-            name: currentMusic.name,
-            code: currentMusic.code
-        })
-    } else {
-        musicaDB.delete(currentMusic.ID)
-    }
-
 }
 
 const updateAddToList = () => {
-    db.getAll(playlists => {
-        const result = []
-        Object.entries(playlists).forEach(([ID, playlist]) => {
-            result.push([ID, playlist.name, playlist.musicas[currentMusic.ID] ? true : false])
+    getPlaylists(playlists => {
+        let anyContain = false
+        console.log(playlists)
+        const list = Object.entries(playlists).map(([id, playlist]) => {
+            const contain = (playlist.cifras[target.id] ? true : false)
+            console.log("a", contain, playlist.cifras[target.id])
+            if (contain) anyContain = true
+            return ({ id, name: playlist.name, contain })
         })
-        constructorAddToList(result)
+        if (anyContain && !target.saved) createCifra()
+        else if (!anyContain && target.saved) deleteCifra()
+
+        constructorAddToList(list)
     })
 }
 
-const toggleAddList = () => {
-    const target = document.querySelector(".adcionar-a-lista")
+const toggleAddToList = () => {
+    const target = document.querySelector(".add-to-list")
     if (target.style.display === "block") {
         target.style.display = "none"
         document.getElementById("toggleController").style.right = "0"
@@ -413,7 +280,22 @@ const toggleAddList = () => {
         document.getElementById("toggleController").style.right = "-15rem"
         updateAddToList()
     }
+}
 
+const toggleNewPlaylist = () => {
+    createPlaylist(updateAddToList)
+}
+
+const updatePlaylistCifras = (event) => {
+    let element = event.target
+    while (element.nodeName !== "DIV") element = element.parentNode
+    const id = element.id
+    getPlaylists(playlists => {
+        console.log(playlists[id].cifras[target.id])
+        if (playlists[id].cifras[target.id]) delete playlists[id].cifras[target.id]
+        else playlists[id].cifras[target.id] = true
+        storage.set({ "playlists": playlists }).then(updateAddToList)
+    })
 }
 
 // função principal do sistema, executada em quanto o site é carregado
@@ -426,8 +308,8 @@ const main = () => {
     document.getElementById("toggleController").addEventListener("click", handleToggleController)
 
     // sistema
-    document.getElementById("add-lista").addEventListener("click", toggleAddList)
-    document.getElementById("my-lists").addEventListener("click", openExplorer)
+    document.getElementById("toggle-add-to-list").addEventListener("click", toggleAddToList)
+    document.getElementById("novaplaylist").addEventListener("click", toggleNewPlaylist)
 
     // configurações
 
@@ -441,14 +323,6 @@ const main = () => {
     document.getElementById("toggleAutoScroll").addEventListener("click", handleToggleAutoScroll)
     document.getElementById("scrollSpeed").addEventListener("input", handleScrollSpeed)
 
-    // explorer
-
-    updateExplorerPlaylistComponent()
-
-    document.getElementById("close").addEventListener("click", handleCloseExplorer)
-    document.getElementById("delete").addEventListener("click", handleDelete)
-    document.getElementById("rename").addEventListener("click", handleRename)
-    document.getElementById("new").addEventListener("click", handleNew)
 }
 
 main()
