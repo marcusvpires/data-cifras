@@ -25,7 +25,9 @@
         "app/public/fast-forward.png",
         "app/public/pause.png",
         "app/public/play-button.png",
-        "app/public/rewind.png"
+        "app/public/rewind.png",
+        "media/logo-96-black.png",
+        "media/logo-96-white.png"
     ],
     "content_scripts": [
         {
@@ -34,6 +36,9 @@
             ],
             "js": [
                 "content.js"
+            ],
+            "css": [
+                "content.css"
             ]
         }
     ]
