@@ -164,6 +164,7 @@ body {
     overflow: auto;
     padding: 1rem;
     background-color: #1c1b1e;
+    box-shadow: 2px 2px 5px #0a090b;
 }
 
 .location-bar {
