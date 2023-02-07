@@ -21,7 +21,7 @@ class Playlist {
         this.musicas = []
     }
     get ID() {
-        return  this.createID()
+        return this.createID()
     }
     createID() {
         return createUniqueID(this.name)
@@ -32,12 +32,16 @@ const createPlaylist = (title, author, code) =>
     browser.storage.local.get("playlists").then((result) => {
         let playlists = {}
         if (result?.playlists) playlists = result.playlists
-        
+
         const playlist = new Playlist(title, author, code)
         playlists[playlist.ID] = playlist
         console.log(playlists)
-        browser.storage.local.set({"playlists": playlists}).then(onSusses, onError)
+        browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
     }, onError)
 
-const getAllPlaylists = (title, author, code) =>
-    browser.storage.local.set(new Musica(title, author, code)).then(onSusses, onError)
+const getAllPlaylists = () =>
+    browser.storage.local.get("playlists").then((result) => {
+        let playlists = {}
+        if (result?.playlists) playlists = result.playlists
+        console.log(playlists)
+    }, onError)
