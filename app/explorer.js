@@ -28,20 +28,23 @@ class Playlist {
     }
 }
 
-const createPlaylist = (title, author, code) =>
+const getAllPlaylists = (callback = console.log) =>
     browser.storage.local.get("playlists").then((result) => {
         let playlists = {}
         if (result?.playlists) playlists = result.playlists
+        callback(playlists)
+    }, onError)
 
+const createPlaylist = (title, author, code) =>
+    getAllPlaylists((playlists) => {
         const playlist = new Playlist(title, author, code)
         playlists[playlist.ID] = playlist
         console.log(playlists)
         browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
-    }, onError)
+    })
 
-const getAllPlaylists = () =>
-    browser.storage.local.get("playlists").then((result) => {
-        let playlists = {}
-        if (result?.playlists) playlists = result.playlists
-        console.log(playlists)
-    }, onError)
+const deletePlaylist = (ID) =>
+    getAllPlaylists((playlists) => {
+        delete playlists[ID]
+        browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
+    })
