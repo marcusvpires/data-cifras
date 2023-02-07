@@ -16,7 +16,7 @@ class Musica {
 }
 
 class Playlist {
-    constructor(name) {
+    constructor(name, musicas = []) {
         this.name = name;
         this.musicas = []
     }
@@ -35,9 +35,9 @@ const getAllPlaylists = (callback = console.log) =>
         callback(playlists)
     }, onError)
 
-const createPlaylist = (title, author, code) =>
+const createPlaylist = (name, musicas = []) =>
     getAllPlaylists((playlists) => {
-        const playlist = new Playlist(title, author, code)
+        const playlist = new Playlist(name, musicas)
         playlists[playlist.ID] = playlist
         console.log(playlists)
         browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
@@ -46,5 +46,11 @@ const createPlaylist = (title, author, code) =>
 const deletePlaylist = (ID) =>
     getAllPlaylists((playlists) => {
         delete playlists[ID]
+        browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
+    })
+
+const updatePlaylist = (ID, name, musicas = []) =>
+    getAllPlaylists((playlists) => {
+        playlists[ID] = new Playlist(name, musicas)
         browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
     })
