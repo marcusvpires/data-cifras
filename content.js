@@ -12,4 +12,28 @@ const scrapCode = () => {
     else alert("erro ao coletar a cifra")
 }
 
-scrapCode()
+// cria o botão no menu do cifra club
+const createButton = () => {
+    try {
+        document.querySelectorAll("#datacifrabutton").forEach(element => element.remove())
+
+        icon_url = browser.extension.getURL("media/logo-96-white.png"); 
+        const button = document.createElement("li")
+        button.innerText = "Data cifra"
+        button.id = "datacifrabutton"
+        button.classList.add("cifra-button")
+        const image = document.createElement("img")
+        image.src = icon_url
+        image.classList.add("cifra-image") 
+        button.appendChild(image)
+        const container = document.querySelector("#side-menu > ul")
+        if (container) {
+            container.insertBefore(button, container.firstChild)
+            container.addEventListener("click", scrapCode)
+        }
+    } catch (err) {
+        console.log(err)
+    }
+}
+
+createButton()
