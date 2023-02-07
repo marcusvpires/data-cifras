@@ -138,8 +138,19 @@ body {
     border-radius: 0 5px 5px 0;
     width: 15rem;
     height: 26rem;
-    background-color: #373a58;
+    background-color: #232635;
     translate: 0 -50%;
+}
+
+.adcionar-a-lista div {
+    border-radius: 2px;
+    padding: 5px;
+    margin: 5px 0;
+    cursor: pointer;
+}
+
+.adcionar-a-lista span {
+    margin-left: 10px;
 }
 
 /* -------------------------------------------------------------------------- */

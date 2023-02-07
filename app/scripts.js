@@ -1,5 +1,11 @@
 console.log("script carregado")
 
+const currentMusic = {
+    ID: undefined,
+    name: undefined,
+    code: undefined
+}
+
 const onError = (err) => console.log(err)
 
 // carrega a targetcifra e compila na página 
@@ -268,7 +274,7 @@ const handleNew = () => {
     db.create(createUniqueID(name), { name: name, musicas: [] }, updateExplorerPlaylistComponent)
 }
 
-const createHTML = (tag, attributes) => {
+const createHTML = (tag, attributes = []) => {
     const element = document.createElement(tag)
     attributes.forEach(([name, value]) => {
         element.setAttribute(name, value)
@@ -280,6 +286,30 @@ const createHTML = (tag, attributes) => {
 /*                           popup adcionar a lista                           */
 /* -------------------------------------------------------------------------- */
 
+const constructorAddToList = (playlists) => {
+    const container = document.querySelector(".adcionar-a-lista")
+    container.innerText = ""
+    playlists.forEach(([ID, name, checked]) => {
+        const element = createHTML("div", [["id", ID]])
+        const input = createHTML("input", [["type", "checkbox"], ["name", ID], ["checked", checked]])
+        const nameElement = createHTML("span")
+        nameElement.innerText = name
+        element.appendChild(input)
+        element.appendChild(nameElement)
+        container.appendChild(element)
+    })
+}
+
+const updateAddToList = () => {
+    db.getAll(playlists => {
+        const result = []
+        Object.entries(playlists).forEach(([ID, playlist]) => {
+            result.push([ID, playlist.name, playlist.musicas[currentMusic.ID] ? true : false])
+        })
+        constructorAddToList(result)
+    })
+}
+
 const toggleAddList = () => {
     const target = document.querySelector(".adcionar-a-lista")
     console.log(target)
@@ -289,8 +319,9 @@ const toggleAddList = () => {
     } else {
         target.style.display = "block"
         document.getElementById("toggleController").style.right = "-15rem"
+        updateAddToList()
     }
-    
+
 }
 
 // função principal do sistema, executada em quanto o site é carregado
