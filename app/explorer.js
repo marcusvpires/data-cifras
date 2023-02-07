@@ -55,10 +55,10 @@ const createPlaylist = (name, musicas = [], callback = () => { }) =>
         browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
     })
 
-const deletePlaylist = (ID) =>
+const deletePlaylist = (ID, callback = () => {}) =>
     getAllPlaylists((playlists) => {
         delete playlists[ID]
-        browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
+        browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
     })
 
 const updatePlaylist = (ID, name, musicas = []) =>
@@ -72,10 +72,22 @@ const updatePlaylist = (ID, name, musicas = []) =>
 /*                               handle playlist                              */
 /* -------------------------------------------------------------------------- */
 
-const updateComponent = () => {
+const handleDeletePlaylist = () => {
+    const target = document.querySelector(".selected-ps")
+    deletePlaylist(target.id, updateExplorerPlaylistComponent)
+    document.getElementById("excluirPlaylist").style.backgroundColor = "#883b42"
+}
+
+const activePlaylistButtins = () => {
+    const exculir = document.getElementById("excluirPlaylist")
+    exculir.style.backgroundColor = "#bf2e3c"
+    exculir.addEventListener("click", handleDeletePlaylist, false)
+}
+
+const updateExplorerPlaylistComponent = () => {
     getAllPlaylists((playlists) => {
         document.getElementById("playlist-tbody").innerText = ""
-        
+
         Object.entries(playlists).map(([ID, playlist]) => {
             const tr = document.createElement("tr")
             tr.id = ID
@@ -83,7 +95,7 @@ const updateComponent = () => {
             const icon = document.createElement("td")
             icon.setAttribute("data-label", "icon")
             icon.style.width = "20px"
-            
+
             const img = document.createElement("img")
             img.classList.add("folder-icon")
             img.src = "public/folder.png"
@@ -92,9 +104,19 @@ const updateComponent = () => {
             const name = document.createElement("td")
             name.innerText = playlist?.name
             name.setAttribute("data-label", "name")
-            
+
             tr.appendChild(icon)
             tr.appendChild(name)
+            tr.addEventListener("click", event => {
+                activePlaylistButtins()
+                let element = event.target
+                while (element.nodeName !== "TR") element = element.parentNode
+                console.log(element)
+                Object.values(document.getElementById("playlist-tbody").children).forEach(element => {
+                    element.className = ""
+                })
+                document.getElementById(element.id).className = "selected-ps"
+            })
             document.getElementById("playlist-tbody").appendChild(tr)
         })
     })
@@ -102,10 +124,11 @@ const updateComponent = () => {
 
 const handleNovaPlaylist = () => {
     const name = window.prompt("Digite o nome da playlist")
-    createPlaylist(name, [],  updateComponent)
+    createPlaylist(name, [], updateExplorerPlaylistComponent)
 }
 
 const createEvents = () => {
+    updateExplorerPlaylistComponent()
     document.getElementById("novaPlaylist").addEventListener("click", handleNovaPlaylist)
 }
 
