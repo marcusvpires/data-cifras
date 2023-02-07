@@ -63,7 +63,7 @@ const handleDirection = () => {
         cifraCode.style.padding = "0 50vw"
 
         let columnCount = 1
-        while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20 ) {
+        while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20) {
             cifraCode.style.columnCount = columnCount
             columnCount++
         }
@@ -85,7 +85,7 @@ const updateCollum = () => {
         do {
             cifraCode.style.columnCount = columnCount
             columnCount++
-        } while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20 )
+        } while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20)
     }
 }
 
@@ -141,26 +141,157 @@ const handleScrollSpeed = (event) => {
     scrolldelay = event.target.value
 }
 
+/* -------------------------------------------------------------------------- */
+/*                               banco de dados                               */
+/* -------------------------------------------------------------------------- */
+
+let key = "playlists"
+
+const createUniqueID = (string) => {
+    return (string + new Date().toTimeString() + new Date().getMilliseconds()).replace(/[^A-Z0-9]/ig, "");
+}
+
+const db = {
+    getAll: (callback = console.log) => {
+        browser.storage.local.get(key).then((result) => {
+            let object = {}
+            if (result[key]) object = result[key]
+            callback(object)
+        }, onError)
+    },
+    get: (ID = null, callback = () => { }) => {
+        db.getAll((object) => callback(object[ID]))
+    },
+    set: (object, callback = () => { }) => {
+        browser.storage.local.set({ [key]: object }).then(callback, onError)
+    },
+    create: (ID, element, callback = () => { }) => {
+        db.getAll((object) => {
+            console.log(object)
+            object[ID] = element
+            db.set(object, callback)
+        })
+    },
+    update: (element, callback = () => { }) => {
+        this.getAll((object) => {
+            object[element.ID] = element
+            db.set(object, callback)
+        })
+    },
+    updateMany: (req, callback = () => { }) => {
+        db.getAll((object) => {
+            Object.entries(req).forEach(([ID, element]) => object[ID] = { ...object[ID], ...element })
+            console.log(object)
+            db.set(object, callback)
+        })
+    },
+    delete: (ID, callback = () => { }) => {
+        db.getAll((object) => {
+            delete object[ID]
+            db.set(object, callback)
+            callback
+        })
+    },
+    deleteMany: (IDs, callback = () => { }) => {
+        db.getAll((object) => {
+            IDs.forEach(ID => delete object[ID])
+            db.set(object, callback)
+        })
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/*                                  explorer                                  */
+/* -------------------------------------------------------------------------- */
+
+const createHTML = (tag, attributes) => {
+    const element = document.createElement(tag)
+    attributes.forEach(([name, value]) => {
+        element.setAttribute(name, value)
+    })
+    return element
+}
+
+const explorerRowEvent = (event) => {
+    let element = event.target
+    while (element.nodeName !== "TR") element = element.parentNode
+    if (element.className === "selected") element.className = ""
+    else element.className = "selected"
+}
+
+const createPlaylistTable = (ID, playlist) => {
+    const tr = createHTML("tr", [["id", ID]])
+    const icon = createHTML("td", [["data-label", "icon"], ["style", "width: 20px;"]])
+    icon.appendChild(createHTML("img", [["class", "folder-icon"], ["src", "public/folder.png"]]))
+    tr.appendChild(icon)
+    const name = createHTML("td", [["data-label", "name"]])
+    name.innerText = playlist?.name
+    tr.appendChild(name)
+
+    tr.addEventListener("click", explorerRowEvent)
+    document.getElementById("playlist-tbody").appendChild(tr)
+}
+
+const updateExplorerPlaylistComponent = () => {
+    db.getAll((playlists) => {
+        document.getElementById("playlist-tbody").innerText = ""
+        Object.entries(playlists).map(([ID, playlist]) => createPlaylistTable(ID, playlist))
+    })
+}
+
+const handleDelete = () => {
+    const targets = document.querySelectorAll(".selected")
+    const IDs = []
+    targets.forEach((target) => IDs.push(target.id))
+    db.deleteMany(IDs, updateExplorerPlaylistComponent)
+}
+
+const handleRename = () => {
+    const targets = document.querySelectorAll(".selected")
+    const novoNome = window.prompt("Escreva um novo nome")
+    const object = {}
+    targets.forEach((target, index) => {
+        if (index !== 0) object[target.id] = { name: novoNome + ` (${index})` }
+        else object[target.id] = { name: novoNome }
+    })
+    console.log(object)
+    db.updateMany(object, updateExplorerPlaylistComponent)
+}
+
+const handleNew = () => {
+    const name = window.prompt("Digite o nome")
+    db.create(createUniqueID(name), { name: name, musicas: [] }, updateExplorerPlaylistComponent)
+}
+
+
 // função principal do sistema, executada em quanto o site é carregado
 // adciona todas as funções do controller
 const main = () => {
     // carrega a targetcifra e compila na página 
     getTargetCifra()
-    
+
     // esconde ou mostra o menu de controle
     document.getElementById("toggleController").addEventListener("click", handleToggleController)
 
     // configurações
-    
+
     document.getElementById("increaseSize").addEventListener("click", handleIncreaseSize)
     document.getElementById("decreaseSize").addEventListener("click", handleDecreaseSize)
     document.getElementById("direction").addEventListener("click", handleDirection)
     document.getElementById("toggleTablatura").addEventListener("click", handleToggleTablatura)
-    
+
     // auto rolagem
 
     document.getElementById("toggleAutoScroll").addEventListener("click", handleToggleAutoScroll)
     document.getElementById("scrollSpeed").addEventListener("input", handleScrollSpeed)
+
+    // explorer
+
+    updateExplorerPlaylistComponent()
+
+    document.getElementById("delete").addEventListener("click", handleDelete)
+    document.getElementById("rename").addEventListener("click", handleRename)
+    document.getElementById("new").addEventListener("click", handleNew)
 }
 
 main()

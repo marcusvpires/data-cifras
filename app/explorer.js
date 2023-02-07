@@ -9,34 +9,6 @@ const createUniqueID = (string) => {
 const onSusses = (message = "sucesso") => console.info(message)
 
 /* -------------------------------------------------------------------------- */
-/*                                   classes                                  */
-/* -------------------------------------------------------------------------- */
-
-class Musica {
-    constructor(title, author, code) {
-        this[createUniqueID(title)] = {
-            title: title,
-            author: author,
-            code: code,
-            date: new Date()
-        }
-    }
-}
-
-class Playlist {
-    constructor(name, musicas = []) {
-        this.name = name;
-        this.musicas = []
-    }
-    get ID() {
-        return this.createID()
-    }
-    createID() {
-        return createUniqueID(this.name)
-    }
-}
-
-/* -------------------------------------------------------------------------- */
 /*                             Middleware playlist                            */
 /* -------------------------------------------------------------------------- */
 

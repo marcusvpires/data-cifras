@@ -236,8 +236,8 @@ tbody>tr:hover {
     cursor: pointer;
 }
 
-.selected-ps {
-    background-color: hwb(211 0% 28%);
+.selected {
+    background-color: #0c0c0c;
 }
 
 .folder-icon {
