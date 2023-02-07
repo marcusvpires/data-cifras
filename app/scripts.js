@@ -276,6 +276,23 @@ const createHTML = (tag, attributes) => {
     return element
 }
 
+/* -------------------------------------------------------------------------- */
+/*                           popup adcionar a lista                           */
+/* -------------------------------------------------------------------------- */
+
+const toggleAddList = () => {
+    const target = document.querySelector(".adcionar-a-lista")
+    console.log(target)
+    if (target.style.display === "block") {
+        target.style.display = "none"
+        document.getElementById("toggleController").style.right = "0"
+    } else {
+        target.style.display = "block"
+        document.getElementById("toggleController").style.right = "-15rem"
+    }
+    
+}
+
 // função principal do sistema, executada em quanto o site é carregado
 // adciona todas as funções do controller
 const main = () => {
@@ -284,6 +301,9 @@ const main = () => {
 
     // esconde ou mostra o menu de controle
     document.getElementById("toggleController").addEventListener("click", handleToggleController)
+
+    // sistema
+    document.getElementById("add-lista").addEventListener("click", toggleAddList)
 
     // configurações
 

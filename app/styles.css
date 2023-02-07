@@ -130,6 +130,18 @@ body {
     cursor: pointer;
 }
 
+.adcionar-a-lista {
+    position: absolute;
+    right: -15.05rem;
+    top: 50%;
+    padding: 1rem;
+    border-radius: 0 5px 5px 0;
+    width: 15rem;
+    height: 26rem;
+    background-color: #373a58;
+    translate: 0 -50%;
+}
+
 /* -------------------------------------------------------------------------- */
 /*                                   tabela                                   */
 /* -------------------------------------------------------------------------- */
