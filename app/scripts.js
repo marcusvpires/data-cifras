@@ -92,7 +92,6 @@ const updateCollum = () => {
 const handleToggleTablatura = () => {
     const button = document.getElementById("toggleTablatura")
     const tbList = document.querySelectorAll(".tablatura")
-    console.log(button.style.backgroundColor, button.style.backgroundColor === "#2c2637")
     if (button.style.backgroundColor === "rgb(95, 86, 111)") {
         button.style.backgroundColor = "#a191c0"
         tbList.forEach(tb => {
@@ -167,7 +166,6 @@ const db = {
     },
     create: (ID, element, callback = () => { }) => {
         db.getAll((object) => {
-            console.log(object)
             object[ID] = element
             db.set(object, callback)
         })
@@ -181,7 +179,6 @@ const db = {
     updateMany: (req, callback = () => { }) => {
         db.getAll((object) => {
             Object.entries(req).forEach(([ID, element]) => object[ID] = { ...object[ID], ...element })
-            console.log(object)
             db.set(object, callback)
         })
     },
@@ -204,12 +201,20 @@ const db = {
 /*                                  explorer                                  */
 /* -------------------------------------------------------------------------- */
 
-const createHTML = (tag, attributes) => {
-    const element = document.createElement(tag)
-    attributes.forEach(([name, value]) => {
-        element.setAttribute(name, value)
+/* --------------------------------- musicas -------------------------------- */
+
+
+/* --------------------------------- playlis -------------------------------- */
+
+const openPlaylist = (event) => {
+    let element = event.target
+    while (element.nodeName !== "TR") element = element.parentNode
+    db.get(element.id, (playlist) => {
+        document.getElementById("explorer-url-bar").style.display = "block"
+        document.getElementById("explorer-music-head").style.display = "block"
+        document.getElementById("playlist-name").innerText = ": " + playlist.name
+        console.log(playlist)
     })
-    return element
 }
 
 const explorerRowEvent = (event) => {
@@ -229,6 +234,7 @@ const createPlaylistTable = (ID, playlist) => {
     tr.appendChild(name)
 
     tr.addEventListener("click", explorerRowEvent)
+    tr.addEventListener("dblclick", openPlaylist)
     document.getElementById("playlist-tbody").appendChild(tr)
 }
 
@@ -254,7 +260,6 @@ const handleRename = () => {
         if (index !== 0) object[target.id] = { name: novoNome + ` (${index})` }
         else object[target.id] = { name: novoNome }
     })
-    console.log(object)
     db.updateMany(object, updateExplorerPlaylistComponent)
 }
 
@@ -263,6 +268,13 @@ const handleNew = () => {
     db.create(createUniqueID(name), { name: name, musicas: [] }, updateExplorerPlaylistComponent)
 }
 
+const createHTML = (tag, attributes) => {
+    const element = document.createElement(tag)
+    attributes.forEach(([name, value]) => {
+        element.setAttribute(name, value)
+    })
+    return element
+}
 
 // função principal do sistema, executada em quanto o site é carregado
 // adciona todas as funções do controller

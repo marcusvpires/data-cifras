@@ -222,6 +222,7 @@ table td {
     padding: 5px 10px;
     white-space: nowrap;
     text-align: left;
+    user-select: none;
 }
 
 table th {
