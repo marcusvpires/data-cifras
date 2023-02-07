@@ -55,7 +55,7 @@ const createPlaylist = (name, musicas = [], callback = () => { }) =>
         browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
     })
 
-const deletePlaylist = (ID, callback = () => {}) =>
+const deletePlaylist = (ID, callback = () => { }) =>
     getAllPlaylists((playlists) => {
         delete playlists[ID]
         browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
@@ -75,16 +75,27 @@ const updatePlaylist = (ID, name, musicas = []) =>
 const handleDeletePlaylist = () => {
     const target = document.querySelector(".selected-ps")
     deletePlaylist(target.id, updateExplorerPlaylistComponent)
-    document.getElementById("excluirPlaylist").style.backgroundColor = "#883b42"
 }
 
 const activePlaylistButtins = () => {
-    const exculir = document.getElementById("excluirPlaylist")
-    exculir.style.backgroundColor = "#bf2e3c"
-    exculir.addEventListener("click", handleDeletePlaylist, false)
+    const excluir = document.getElementById("excluirPlaylist")
+    const renomear = document.getElementById("renomearPlaylist")
+    if (excluir.style.backgroundColor !== "rgb(191, 46, 60)") {
+        console.log("add event listener")
+        excluir.style.backgroundColor = "rgb(191, 46, 60)"
+        excluir.addEventListener("click", handleDeletePlaylist, false)
+    }
+    if (renomear.style.backgroundColor !== "rgb(0, 89, 184)") {
+        renomear.style.backgroundColor = "rgb(0, 89, 184)"
+        renomear.addEventListener("click", handleDeletePlaylist, false)
+
+    }
 }
 
 const updateExplorerPlaylistComponent = () => {
+    document.getElementById("excluirPlaylist").style.backgroundColor = "#883b42"
+    document.getElementById("renomearPlaylist").style.backgroundColor = "#0c3d73"
+
     getAllPlaylists((playlists) => {
         document.getElementById("playlist-tbody").innerText = ""
 

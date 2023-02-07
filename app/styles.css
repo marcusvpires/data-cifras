@@ -147,15 +147,15 @@ body {
 }
 
 .tollbar {
-	display: flex;
-	margin: 0px 5px 20px 5px;
+    display: flex;
+    margin: 0px 5px 20px 5px;
 }
 
 .tollbar-button {
-	border-radius: 5px;
-	background-color: red;
-	padding: 5px 10px;
-	margin: 0 5px;
+    border-radius: 5px;
+    background-color: red;
+    padding: 5px 10px;
+    margin: 0 5px;
     cursor: pointer;
 }
 
@@ -231,13 +231,13 @@ table th {
     border-right: 1px solid #5d5a64;
 }
 
-tbody > tr:hover {
-        background-color: #0c0c0c;
+tbody>tr:hover {
+    background-color: #0c0c0c;
     cursor: pointer;
 }
 
 .selected-ps {
-    background-color: #0c0c0c;
+    background-color: hwb(211 0% 28%);
 }
 
 .folder-icon {
