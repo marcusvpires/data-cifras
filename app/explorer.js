@@ -61,16 +61,22 @@ const deletePlaylist = (ID, callback = () => { }) =>
         browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
     })
 
-const updatePlaylist = (ID, name, musicas = []) =>
+const updatePlaylist = (ID, name, musicas = [], callback = () => { }) =>
     getAllPlaylists((playlists) => {
         playlists[ID] = new Playlist(name, musicas)
-        browser.storage.local.set({ "playlists": playlists }).then(onSusses, onError)
+        browser.storage.local.set({ "playlists": playlists }).then(callback, onError)
     })
 
 
 /* -------------------------------------------------------------------------- */
-/*                               handle playlist                              */
+/*                               handle explorer                              */
 /* -------------------------------------------------------------------------- */
+
+const handleRenomear = () => {
+    const target = document.querySelector(".selected-ps")
+    const novoNome = window.prompt("Escreva um novo nome para a playlist")
+    updatePlaylist(target.id, novoNome, [],updateExplorerPlaylistComponent) 
+}
 
 const handleDeletePlaylist = () => {
     const target = document.querySelector(".selected-ps")
@@ -87,7 +93,7 @@ const activePlaylistButtins = () => {
     }
     if (renomear.style.backgroundColor !== "rgb(0, 89, 184)") {
         renomear.style.backgroundColor = "rgb(0, 89, 184)"
-        renomear.addEventListener("click", handleDeletePlaylist, false)
+        renomear.addEventListener("click", handleRenomear, false)
 
     }
 }
