@@ -235,3 +235,7 @@ tbody > tr:hover {
     cursor: pointer;
 }
 
+.folder-icon {
+    height: 20px;
+    width: 20px;
+}
