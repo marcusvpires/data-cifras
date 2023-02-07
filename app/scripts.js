@@ -1,6 +1,6 @@
 console.log("script carregado")
 
-const currentMusic = {
+let currentMusic = {
     ID: undefined,
     name: undefined,
     code: undefined
@@ -20,6 +20,11 @@ const getTargetCifra = () => {
         component.contentEditable = true
         component.removeAttribute("xmlns")
         document.querySelector("#cifra").appendChild(component)
+        currentMusic = {
+            ID: createUniqueID(results.targetcifra.title),
+            name: results.targetcifra.title + ';' + results.targetcifra.author,
+            code: results.targetcifra.code  
+        }
     }, onError);
 }
 
@@ -176,15 +181,22 @@ const db = {
             db.set(object, callback)
         })
     },
-    update: (element, callback = () => { }) => {
-        this.getAll((object) => {
-            object[element.ID] = element
+    update: (ID, element, callback = () => { }) => {
+        db.getAll((object) => {
+            object[ID] = { ...object[ID], ...element }
             db.set(object, callback)
         })
     },
     updateMany: (req, callback = () => { }) => {
         db.getAll((object) => {
             Object.entries(req).forEach(([ID, element]) => object[ID] = { ...object[ID], ...element })
+            db.set(object, callback)
+        })
+    },
+    updatePlaylistMusicas: (ID, musicaID, musica, callback = () => { }) => {
+        db.getAll((object) => {
+            if (object[ID].musicas[musicaID]) delete object[ID].musicas[musicaID]
+            else object[ID].musicas[musicaID] = musica
             db.set(object, callback)
         })
     },
@@ -212,6 +224,15 @@ const db = {
 
 /* --------------------------------- playlis -------------------------------- */
 
+const openExplorer = () => {
+    document.querySelector(".explorer").style.display = "flex"
+    updateExplorerPlaylistComponent()
+}
+
+const handleCloseExplorer = () => {
+    document.querySelector(".explorer").style.display = "none"
+}
+
 const openPlaylist = (event) => {
     let element = event.target
     while (element.nodeName !== "TR") element = element.parentNode
@@ -219,7 +240,6 @@ const openPlaylist = (event) => {
         document.getElementById("explorer-url-bar").style.display = "block"
         document.getElementById("explorer-music-head").style.display = "block"
         document.getElementById("playlist-name").innerText = ": " + playlist.name
-        console.log(playlist)
     })
 }
 
@@ -271,7 +291,7 @@ const handleRename = () => {
 
 const handleNew = () => {
     const name = window.prompt("Digite o nome")
-    db.create(createUniqueID(name), { name: name, musicas: [] }, updateExplorerPlaylistComponent)
+    db.create(createUniqueID(name), { name: name, musicas: {} }, updateExplorerPlaylistComponent)
 }
 
 const createHTML = (tag, attributes = []) => {
@@ -286,16 +306,24 @@ const createHTML = (tag, attributes = []) => {
 /*                           popup adcionar a lista                           */
 /* -------------------------------------------------------------------------- */
 
+const updateList = (event) => {
+    let element = event.target
+    while (element.nodeName !== "DIV") element = element.parentNode
+    db.updatePlaylistMusicas(element.id, currentMusic.ID, currentMusic.name, updateAddToList)
+}
+
 const constructorAddToList = (playlists) => {
     const container = document.querySelector(".adcionar-a-lista")
     container.innerText = ""
     playlists.forEach(([ID, name, checked]) => {
         const element = createHTML("div", [["id", ID]])
-        const input = createHTML("input", [["type", "checkbox"], ["name", ID], ["checked", checked]])
+        const input = createHTML("input", [["type", "checkbox"], ["name", ID]])
+        input.checked = checked
         const nameElement = createHTML("span")
         nameElement.innerText = name
         element.appendChild(input)
         element.appendChild(nameElement)
+        element.addEventListener("click", updateList)
         container.appendChild(element)
     })
 }
@@ -312,7 +340,6 @@ const updateAddToList = () => {
 
 const toggleAddList = () => {
     const target = document.querySelector(".adcionar-a-lista")
-    console.log(target)
     if (target.style.display === "block") {
         target.style.display = "none"
         document.getElementById("toggleController").style.right = "0"
@@ -335,6 +362,7 @@ const main = () => {
 
     // sistema
     document.getElementById("add-lista").addEventListener("click", toggleAddList)
+    document.getElementById("my-lists").addEventListener("click", openExplorer)
 
     // configurações
 
@@ -352,6 +380,7 @@ const main = () => {
 
     updateExplorerPlaylistComponent()
 
+    document.getElementById("close").addEventListener("click", handleCloseExplorer)
     document.getElementById("delete").addEventListener("click", handleDelete)
     document.getElementById("rename").addEventListener("click", handleRename)
     document.getElementById("new").addEventListener("click", handleNew)
