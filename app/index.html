@@ -17,9 +17,6 @@
         <div class="config" style="cursor: pointer;">
             <span>Adcionar à lista</span>
         </div>
-        <div class="config" style="cursor: pointer;">
-            <span>Sair do prompt</span>
-        </div>
         <div class="title">CONFIGURAÇÕES</div>
         <div class="config">
             <div class="button" id="decreaseSize" style="font-size: .7rem;">A</div>
@@ -39,7 +36,64 @@
             <img class="icon" src="./public/fast-forward.png" alt="">
             <div class="icon" id="scrollSpeedDisplay" style="width: 3rem;border-radius: 10px;">30</div>
         </div>
-        <input type="range" name="autoScroll" id="scrollSpeed" value="30" min="1" max="201" step="1" style="cursor: pointer;">
+        <input type="range" name="autoScroll" id="scrollSpeed" value="30" min="1" max="201" step="1"
+            style="cursor: pointer;">
+    </div>
+    <div class="explorer">
+        <div class="table-container">
+            <div class="tollbar">
+                <div class="tollbar-button" style="background-color: #bf2e3c;">Exculir</div>
+                <div class="tollbar-button" style="background-color: #0058b7">Renomear</div>
+                <div class="tollbar-button" style="background-color: #208837;">Mover</div>
+                <div class="tollbar-button" style="background-color: #bf2e3c; font-weight: 900; margin-left: auto;">X
+                </div>
+            </div>
+            <div style="display: flex; margin: 5px 10px 10px;">
+
+                <div class="return">↩</div>
+                <div class="location-bar">
+                    <span> : Melhores</span>
+                </div>
+            </div>
+            <table>
+                <thead>
+                    <tr class="thead">
+                        <th scope="col" style="width: 20px;"><input type="checkbox" name="" id=""></th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Autor</th>
+                        <th scope="col" style="width: 100px;">Data</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="space" style="height: 20px;">
+                    </tr>
+                    <tr>
+                        <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
+                        <td data-label="Name">Vou Deixar</td>
+                        <td data-label="Autor">Skank</td>
+                        <td data-label="Data">12/05/23</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
+                        <td scope="row" data-label="Name">Evidências</td>
+                        <td data-label="Autor">Chitãozinho & Xororó</td>
+                        <td data-label="Data">20/07/23</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
+                        <td scope="row" data-label="Name">Tempo Perdido</td>
+                        <td data-label="Autor">Legião Urbana</td>
+                        <td data-label="Data">12/03/23</td>
+                    </tr>
+                    <tr>
+                        <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
+                        <td scope="row" data-label="Name">Leão</td>
+                        <td data-label="Autor">Marília Mendonça</td>
+                        <td data-label="Data">04/05/22</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
     <div class="cifra" id="cifra"></div>
     <script src="scripts.js"></script>
