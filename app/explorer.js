@@ -53,6 +53,24 @@ const deletePlaylist = (playlistIDs) => {
     })
 }
 
+const deleteCifra = (cifraIDs) => {
+    getPlaylists(playlists => {
+        getCifras(cifras =>{
+            cifraIDs.forEach(cifraID => {
+                delete playlists[document.querySelector(".locationbarurl").id].cifras[cifraID]
+                let anyPlaylist = false
+                Object.keys(cifras[cifraID].playlists).forEach(playlistID => {
+                    if (playlists[playlistID].cifras[cifraID]) anyPlaylist = true
+                })
+                if (!anyPlaylist) delete cifras[cifraID]
+            })
+            storage.set({ "playlists": playlists }).then(() => {
+                storage.set({ "cifras": cifras }).then(updateCifraTable)
+            })
+        })
+    })
+}
+
 /* -------------------------------------------------------------------------- */
 /*                               atualiza tabela                              */
 /* -------------------------------------------------------------------------- */
@@ -135,6 +153,13 @@ const handleDeletePlaylist = () => {
     deletePlaylist(ids)
 }
 
+const handleDeleteCifra = () => {
+    const query = document.querySelectorAll(".selected")
+    const ids = Object.values(query).map(row => row.id)
+    console.log(ids)
+    deleteCifra(ids)
+}
+
 const handleRename = () => {
     const targets = document.querySelectorAll(".selected")
     const novoNome = window.prompt("Escreva um novo nome")
@@ -149,14 +174,47 @@ const handleRename = () => {
     })
 }
 
+const handleRenameCifra = () => {
+    const targets = document.querySelectorAll(".selected")
+    const novoNome = window.prompt("Escreva um novo nome")
+    const object = {}
+    targets.forEach((target, index) => {
+        if (index !== 0) object[target.id] = { name: novoNome + ` (${index})` }
+        else object[target.id] = { title: novoNome }
+    })
+    getCifras(cifras => {
+        Object.entries(object).forEach(([id, element]) => cifras[id] = { ...cifras[id], ...element })
+        storage.set({ "cifras": cifras }).then(updateCifraTable)
+    })
+}
+
 const handleOpen = () => {
     const target = document.querySelector(".selected")
     document.getElementById("headerplaylists").style.display = "none"
     document.getElementById("headercifras").style.display = "table-row"
+    document.getElementById("return").addEventListener("click", handleReturn, false)
+    document.getElementById("delete").removeEventListener("click", handleDeletePlaylist)
+    document.getElementById("delete").addEventListener("click", handleDeleteCifra)
+    document.getElementById("rename").removeEventListener("click", handleRename)
+    document.getElementById("rename").addEventListener("click", handleRenameCifra)
     const bar = document.querySelector(".locationbarurl")
     bar.innerText = target.querySelector('[data-label="Name"]').innerText
     bar.id = target.id
     updateCifraTable()
+}
+
+const handleReturn = () => {
+    const target = document.querySelector(".selected")
+    document.getElementById("headerplaylists").style.display = "table-row"
+    document.getElementById("headercifras").style.display = "none"
+    document.getElementById("delete").removeEventListener("click", handleDeleteCifra)
+    document.getElementById("delete").addEventListener("click", handleDeletePlaylist)
+    document.getElementById("rename").removeEventListener("click", handleRenameCifra)
+    document.getElementById("rename").addEventListener("click", handleRename)
+    const bar = document.querySelector(".locationbarurl")
+    bar.innerText = ""
+    bar.id = ""
+    updatePlaylistTable()
 }
 
 /* <tr>
