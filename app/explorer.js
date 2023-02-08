@@ -95,6 +95,35 @@ const updatePlaylistTable = () => {
     })
 }
 
+const updateCifraTable = () => {
+    const container = document.querySelector("tbody")
+    container.innerText = ""
+    container.appendChild(createHTML("tr", [["class", "space"]]))
+    const playlistID = document.querySelector(".locationbarurl").id
+    getPlaylists(playlists => {
+        const cifraIDs = Object.keys(playlists[playlistID].cifras)
+        getCifras((cifras) => {
+            cifraIDs.forEach(cifraID => {
+                const cifra = cifras[cifraID]
+                const component = createHTML("tr", [["id", cifraID]])
+                const checkbox = createHTML("td", [["data-label", "Checkbox"]])
+                checkbox.appendChild(createHTML("input", [["type", "checkbox"]]))
+    
+                const title = createHTML("td", [["data-label", "Titulo"]])
+                const author = createHTML("td", [["data-label", "Autores"]])
+                title.innerText = cifra.title
+                author.innerText = cifra.author
+    
+                component.appendChild(checkbox)
+                component.appendChild(title)
+                component.appendChild(author)
+                component.addEventListener("click", handleSelect)
+                container.appendChild(component)
+            })
+        })
+    })
+}
+
 /* -------------------------------------------------------------------------- */
 /*                             barra de utilidades                            */
 /* -------------------------------------------------------------------------- */
@@ -106,6 +135,30 @@ const handleDeletePlaylist = () => {
     deletePlaylist(ids)
 }
 
+const handleRename = () => {
+    const targets = document.querySelectorAll(".selected")
+    const novoNome = window.prompt("Escreva um novo nome")
+    const object = {}
+    targets.forEach((target, index) => {
+        if (index !== 0) object[target.id] = { name: novoNome + ` (${index})` }
+        else object[target.id] = { name: novoNome }
+    })
+    getPlaylists(playlists => {
+        Object.entries(object).forEach(([id, element]) => playlists[id] = { ...playlists[id], ...element })
+        storage.set({ "playlists": playlists }).then(updatePlaylistTable)
+    })
+}
+
+const handleOpen = () => {
+    const target = document.querySelector(".selected")
+    document.getElementById("headerplaylists").style.display = "none"
+    document.getElementById("headercifras").style.display = "table-row"
+    const bar = document.querySelector(".locationbarurl")
+    bar.innerText = target.querySelector('[data-label="Name"]').innerText
+    bar.id = target.id
+    updateCifraTable()
+}
+
 /* <tr>
     <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
     <td data-label="Name">Vou Deixar</td>
@@ -113,4 +166,6 @@ const handleDeletePlaylist = () => {
 </tr> */
 
 document.getElementById("delete").addEventListener("click", handleDeletePlaylist)
+document.getElementById("rename").addEventListener("click", handleRename)
+document.getElementById("open").addEventListener("click", handleOpen)
 updatePlaylistTable()
