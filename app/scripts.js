@@ -316,10 +316,13 @@ const main = () => {
 
     // esconde ou mostra o menu de controle
     document.getElementById("toggleController").addEventListener("click", handleToggleController)
-
+    
     // sistema
     document.getElementById("toggle-add-to-list").addEventListener("click", toggleAddToList)
     document.getElementById("novaplaylist").addEventListener("click", toggleNewPlaylist)
+    document.getElementById("my-lists").addEventListener("click", () => {
+        window.location.href="explorer.html";
+    })
 
     // configurações
 

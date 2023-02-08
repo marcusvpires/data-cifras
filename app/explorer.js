@@ -38,7 +38,7 @@ const getCifras = (callback) => storage.get("cifras").then((response) => {
 
 const deletePlaylist = (playlistIDs) => {
     getPlaylists(playlists => {
-        getCifras(cifras =>{
+        getCifras(cifras => {
             playlistIDs.forEach(playlistID => {
                 Object.keys(playlists[playlistID].cifras).forEach(cifraID => {
                     delete cifras[cifraID].playlists[playlistID]
@@ -55,7 +55,7 @@ const deletePlaylist = (playlistIDs) => {
 
 const deleteCifra = (cifraIDs) => {
     getPlaylists(playlists => {
-        getCifras(cifras =>{
+        getCifras(cifras => {
             cifraIDs.forEach(cifraID => {
                 delete playlists[document.querySelector(".locationbarurl").id].cifras[cifraID]
                 let anyPlaylist = false
@@ -126,12 +126,12 @@ const updateCifraTable = () => {
                 const component = createHTML("tr", [["id", cifraID]])
                 const checkbox = createHTML("td", [["data-label", "Checkbox"]])
                 checkbox.appendChild(createHTML("input", [["type", "checkbox"]]))
-    
+
                 const title = createHTML("td", [["data-label", "Titulo"]])
                 const author = createHTML("td", [["data-label", "Autores"]])
                 title.innerText = cifra.title
                 author.innerText = cifra.author
-    
+
                 component.appendChild(checkbox)
                 component.appendChild(title)
                 component.appendChild(author)
@@ -197,8 +197,24 @@ const handleOpen = () => {
     document.getElementById("delete").addEventListener("click", handleDeleteCifra)
     document.getElementById("rename").removeEventListener("click", handleRename)
     document.getElementById("rename").addEventListener("click", handleRenameCifra)
+    document.getElementById("open").removeEventListener("click", handleOpen)
+    document.getElementById("open").addEventListener("click", handleOpenCifra)
+
     const bar = document.querySelector(".locationbarurl")
-    bar.innerText = target.querySelector('[data-label="Name"]').innerText
+    bar.innerText = target.querySelector('.name')
+    bar.id = target.id
+    updateCifraTable()
+}
+
+const handleOpenCifra = () => {
+    const target = document.querySelector(".selected")
+    getCifras(cifras => {
+        const cifra = cifras[target.id]
+        let storingNote = browser.storage.local.set({ "targetcifra": cifra });
+        storingNote.then(() => {
+            window.location.href = "index.html";
+        }, onError)
+    })
     bar.id = target.id
     updateCifraTable()
 }
@@ -211,6 +227,8 @@ const handleReturn = () => {
     document.getElementById("delete").addEventListener("click", handleDeletePlaylist)
     document.getElementById("rename").removeEventListener("click", handleRenameCifra)
     document.getElementById("rename").addEventListener("click", handleRename)
+    document.getElementById("open").removeEventListener("click", handleOpenCifra)
+    document.getElementById("open").addEventListener("click", handleOpen)
     const bar = document.querySelector(".locationbarurl")
     bar.innerText = ""
     bar.id = ""
@@ -226,4 +244,7 @@ const handleReturn = () => {
 document.getElementById("delete").addEventListener("click", handleDeletePlaylist)
 document.getElementById("rename").addEventListener("click", handleRename)
 document.getElementById("open").addEventListener("click", handleOpen)
+document.getElementById("close").addEventListener("click", () => {
+    window.location.href = "index.html";
+})
 updatePlaylistTable()
