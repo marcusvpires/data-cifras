@@ -33,6 +33,20 @@ const getPlaylists = (callback) => storage.get("playlists").then((response) => {
 /*                               atualiza tabela                              */
 /* -------------------------------------------------------------------------- */
 
+const handleSelect = (event) => {
+    let element = event.target
+    while (element.nodeName !== "TR") element = element.parentNode
+    const checkbox = element.querySelector("input")
+    if (element.className === "selected") {
+        checkbox.checked = false
+        element.className = ""
+    }
+    else {
+        checkbox.checked = true;
+        element.className = "selected"
+    }
+}
+
 const updatePlaylistTable = () => {
     const container = document.querySelector("tbody")
     container.innerText = ""
@@ -51,6 +65,7 @@ const updatePlaylistTable = () => {
             component.appendChild(checkbox)
             component.appendChild(name)
             component.appendChild(cifras)
+            component.addEventListener("click", handleSelect)
             container.appendChild(component)
         })
     })
