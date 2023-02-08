@@ -212,12 +212,21 @@ const handleOpenCifra = () => {
     const target = document.querySelector(".selected")
     getCifras(cifras => {
         const cifra = cifras[target.id]
-        let storingNote = browser.storage.local.set({ "targetcifra": cifra });
+        cifra.id = target.id
+        console.log(target.id)
+        console.table(cifra)
+        let storingNote = browser.storage.local.set({ "targetcifra": {
+            title: cifra.title,
+            author: cifra.author,
+            date: cifra.date,
+            playlists: cifra.playlists,
+            code: cifra.code,
+            id: target.id
+        } });
         storingNote.then(() => {
             window.location.href = "index.html";
         }, onError)
     })
-    bar.id = target.id
     updateCifraTable()
 }
 

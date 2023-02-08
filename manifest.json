@@ -1,9 +1,9 @@
 {
     "manifest_version": 2,
     "name": "data cifra",
-    "version": "1.0",
+    "version": "1.1",
     "homepage_url": "https://github.com/marcusvpires/data-cifras",
-    "description": "Extensão para criar algo como um teleprompt para a leitura de cifras importadas diretamente do cifra club.",
+    "description": "Extensão para chrome e firefox que serve como uma extensão ao cifra club. A Data cifra permite que você salve, edite e categorize as cifras, além de trazer várias ferramentas que ajudam a visualizar toda a cifra em quanto toca a musica.",
     "icons": {
         "48": "media/logo-48.png",
         "96": "media/logo-96.png"

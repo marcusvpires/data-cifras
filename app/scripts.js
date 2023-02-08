@@ -26,24 +26,27 @@ const createID = () => {
 const getTargetCifra = () => {
     let gettingAllStorageItems = browser.storage.local.get("targetcifra");
     gettingAllStorageItems.then((results) => {
-        const code = results.targetcifra.code
+        const cifra = results.targetcifra
+        if (!cifra.id) {
+            cifra.id = createID()
+            cifra.saved = false
+        } else {
+            cifra.saved = true
+        }
+        target = cifra
+        console.log(target)
+
         // usa o DOMParser pois o innerHTML é bloqueado em extensões
-        var doc = new DOMParser().parseFromString(code, "text/html");
+        var doc = new DOMParser().parseFromString(cifra.code, "text/html");
         const component = doc.querySelector("pre")
         component.id = "cifra-code"
         component.contentEditable = true
         component.removeAttribute("xmlns")
+        component.addEventListener("input", () => {
+            if (target.saved) createCifra()
+        })
         document.querySelector("#cifra").appendChild(component)
-        const tg = results.targetcifra
 
-        target = {
-            id: createID(),
-            title: tg.title,
-            author: tg.author,
-            playlists: {},
-            code: tg.code,
-            saved: false,
-        }
     }, onError);
 }
 
@@ -58,6 +61,9 @@ const handleToggleController = () => {
     } else {
         controller.style.translate = "-100%"
         button.innerText = "▸"
+        const addToListTab = document.querySelector(".add-to-list")
+        addToListTab.style.display = "none"
+        document.getElementById("toggleController").style.right = "0"
     }
 }
 
@@ -213,6 +219,9 @@ const getCifras = (callback) => storage.get("cifras").then((response) => {
 
 const createCifra = () => {
     getCifras(cifras => {
+        const cifra = document.querySelector(".cifra > pre")
+        const code = new XMLSerializer().serializeToString(cifra);
+        target.code = code
         cifras[target.id] = {
             title: target.title,
             author: target.author,
@@ -260,10 +269,8 @@ const constructorAddToList = (list) => {
 const updateAddToList = () => {
     getPlaylists(playlists => {
         let anyContain = false
-        console.log(playlists)
         const list = Object.entries(playlists).map(([id, playlist]) => {
             const contain = (playlist.cifras[target.id] ? true : false)
-            console.log("a", contain, playlist.cifras[target.id])
             if (contain) anyContain = true
             return ({ id, name: playlist.name, contain })
         })
@@ -295,7 +302,6 @@ const updatePlaylistCifras = (event) => {
     while (element.nodeName !== "DIV") element = element.parentNode
     const id = element.id
     getPlaylists(playlists => {
-        console.log(playlists[id].cifras[target.id])
         if (playlists[id].cifras[target.id]) {
             delete target.playlists[id]
             delete playlists[id].cifras[target.id]
@@ -316,12 +322,12 @@ const main = () => {
 
     // esconde ou mostra o menu de controle
     document.getElementById("toggleController").addEventListener("click", handleToggleController)
-    
+
     // sistema
     document.getElementById("toggle-add-to-list").addEventListener("click", toggleAddToList)
     document.getElementById("novaplaylist").addEventListener("click", toggleNewPlaylist)
     document.getElementById("my-lists").addEventListener("click", () => {
-        window.location.href="explorer.html";
+        window.location.href = "explorer.html";
     })
 
     // configurações
@@ -335,7 +341,12 @@ const main = () => {
 
     document.getElementById("toggleAutoScroll").addEventListener("click", handleToggleAutoScroll)
     document.getElementById("scrollSpeed").addEventListener("input", handleScrollSpeed)
-
+    document.getElementById("scrollPrev").addEventListener("click", () => {
+        scrollBy(-250, -250)
+    })
+    document.getElementById("scrollNext").addEventListener("click", () => {
+        scrollBy(250, 250)
+    })
 }
 
 main()
