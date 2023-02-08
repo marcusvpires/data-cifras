@@ -7,6 +7,7 @@ let target = {
     id: undefined,
     name: undefined,
     code: undefined,
+    playlists: {},
     saved: false,
 }
 
@@ -39,6 +40,7 @@ const getTargetCifra = () => {
             id: createID(),
             title: tg.title,
             author: tg.author,
+            playlists: {},
             code: tg.code,
             saved: false,
         }
@@ -215,6 +217,7 @@ const createCifra = () => {
             title: target.title,
             author: target.author,
             date: new Date(),
+            playlists: target.playlists,
             code: target.code
         }
         target.saved = true
@@ -264,7 +267,7 @@ const updateAddToList = () => {
             if (contain) anyContain = true
             return ({ id, name: playlist.name, contain })
         })
-        if (anyContain && !target.saved) createCifra()
+        if (anyContain) createCifra()
         else if (!anyContain && target.saved) deleteCifra()
 
         constructorAddToList(list)
@@ -293,8 +296,14 @@ const updatePlaylistCifras = (event) => {
     const id = element.id
     getPlaylists(playlists => {
         console.log(playlists[id].cifras[target.id])
-        if (playlists[id].cifras[target.id]) delete playlists[id].cifras[target.id]
-        else playlists[id].cifras[target.id] = true
+        if (playlists[id].cifras[target.id]) {
+            delete target.playlists[id]
+            delete playlists[id].cifras[target.id]
+        }
+        else {
+            target.playlists[id] = true
+            playlists[id].cifras[target.id] = true
+        }
         storage.set({ "playlists": playlists }).then(updateAddToList)
     })
 }

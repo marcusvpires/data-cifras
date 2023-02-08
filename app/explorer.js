@@ -29,6 +29,30 @@ const getPlaylists = (callback) => storage.get("playlists").then((response) => {
     if (response.playlists) playlists = response.playlists
     callback(playlists)
 }, onError)
+
+const getCifras = (callback) => storage.get("cifras").then((response) => {
+    let cifras = {}
+    if (response.cifras) cifras = response.cifras
+    callback(cifras)
+}, onError)
+
+const deletePlaylist = (playlistIDs) => {
+    getPlaylists(playlists => {
+        getCifras(cifras =>{
+            playlistIDs.forEach(playlistID => {
+                Object.keys(playlists[playlistID].cifras).forEach(cifraID => {
+                    delete cifras[cifraID].playlists[playlistID]
+                    if (Object.keys(cifras[cifraID].playlists).length === 0) delete cifras[cifraID]
+                })
+                delete playlists[playlistID]
+            })
+            storage.set({ "playlists": playlists }).then(() => {
+                storage.set({ "cifras": cifras }).then(updatePlaylistTable)
+            })
+        })
+    })
+}
+
 /* -------------------------------------------------------------------------- */
 /*                               atualiza tabela                              */
 /* -------------------------------------------------------------------------- */
@@ -71,6 +95,16 @@ const updatePlaylistTable = () => {
     })
 }
 
+/* -------------------------------------------------------------------------- */
+/*                             barra de utilidades                            */
+/* -------------------------------------------------------------------------- */
+
+const handleDeletePlaylist = () => {
+    const query = document.querySelectorAll(".selected")
+    const ids = Object.values(query).map(row => row.id)
+    console.log(ids)
+    deletePlaylist(ids)
+}
 
 /* <tr>
     <td data-label="Checkbox"><input type="checkbox" name="" id=""></td>
@@ -78,4 +112,5 @@ const updatePlaylistTable = () => {
     <td data-label="Cifras">12/05/23</td>
 </tr> */
 
+document.getElementById("delete").addEventListener("click", handleDeletePlaylist)
 updatePlaylistTable()
