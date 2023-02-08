@@ -1,15 +1,14 @@
-# DATA CIFRAS
 
-Extensão para criar algo como um teleprompt para a leitura de cifras importadas diretamente do cifra club
+# Data cifras
 
-## Funcionalidades
+Extensão para chrome e firefox que serve como uma extensão ao [cifra club](https://www.cifraclub.com.br). A Data cifra permite que você salve, edite e categorize as cifras, além de trazer várias ferramentas que ajudam a visualizar toda a cifra em quanto toca a musica.
 
-- Auto rolagem
+![](media\screenshot\button.png)
 
-- Tamanho da fonte
+![](media\screenshot\edicao.png)
 
-- Mudar entre coluna unica e multiplas colunas
+![](media\screenshot\tela-cheia.png)
 
-- Editar a cifra e criar anotações
+![](media\screenshot\modo-coluna.png)
 
-- Salvar em diferentes listas
+![](media\screenshot\tabela.png)

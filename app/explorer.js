@@ -190,20 +190,22 @@ const handleRenameCifra = () => {
 
 const handleOpen = () => {
     const target = document.querySelector(".selected")
-    document.getElementById("headerplaylists").style.display = "none"
-    document.getElementById("headercifras").style.display = "table-row"
-    document.getElementById("return").addEventListener("click", handleReturn, false)
-    document.getElementById("delete").removeEventListener("click", handleDeletePlaylist)
-    document.getElementById("delete").addEventListener("click", handleDeleteCifra)
-    document.getElementById("rename").removeEventListener("click", handleRename)
-    document.getElementById("rename").addEventListener("click", handleRenameCifra)
-    document.getElementById("open").removeEventListener("click", handleOpen)
-    document.getElementById("open").addEventListener("click", handleOpenCifra)
-
-    const bar = document.querySelector(".locationbarurl")
-    bar.innerText = target.querySelector('.name')
-    bar.id = target.id
-    updateCifraTable()
+    if (target) {
+        document.getElementById("headerplaylists").style.display = "none"
+        document.getElementById("headercifras").style.display = "table-row"
+        document.getElementById("return").addEventListener("click", handleReturn, false)
+        document.getElementById("delete").removeEventListener("click", handleDeletePlaylist)
+        document.getElementById("delete").addEventListener("click", handleDeleteCifra)
+        document.getElementById("rename").removeEventListener("click", handleRename)
+        document.getElementById("rename").addEventListener("click", handleRenameCifra)
+        document.getElementById("open").removeEventListener("click", handleOpen)
+        document.getElementById("open").addEventListener("click", handleOpenCifra)
+    
+        const bar = document.querySelector(".locationbarurl")
+        bar.innerText = target.querySelector('.name')
+        bar.id = target.id
+        updateCifraTable()
+    }
 }
 
 const handleOpenCifra = () => {

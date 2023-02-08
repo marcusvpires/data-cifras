@@ -17,6 +17,10 @@ const createButton = () => {
     try {
         // document.querySelectorAll("#datacifrabutton").forEach(element => element.remove())
         
+        Object.values(document.querySelectorAll("#datacifrabutton")).forEach(el => {
+            el.remove()
+        })
+
         const button = document.createElement("li")
         button.innerText = "Data cifra"
         button.id = "datacifrabutton"
@@ -35,4 +39,4 @@ const createButton = () => {
     }
 }
 
-createButton()
+window.addEventListener('locationchange', createButton);createButton()
