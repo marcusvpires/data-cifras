@@ -214,6 +214,7 @@ const createCifra = () => {
         cifras[target.id] = {
             title: target.title,
             author: target.author,
+            date: new Date(),
             code: target.code
         }
         target.saved = true
