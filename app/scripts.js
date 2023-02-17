@@ -1,352 +1,147 @@
 /* -------------------------------------------------------------------------- */
-/*                              variáveis globais                             */
+/*                                  Database                                  */
 /* -------------------------------------------------------------------------- */
 
-// musica aberta no momento
-let target = {
-    id: undefined,
-    name: undefined,
-    code: undefined,
-    playlists: {},
-    saved: false,
+/* 
+
+table = {
+    playlists: Playlists[],
+    cipher: Ciphers[],
 }
 
-/* -------------------------------------------------------------------------- */
-/*                             funções auxiliares                             */
-/* -------------------------------------------------------------------------- */
-
-const onError = (err) => console.log(err)
-
-const createID = () => {
-    const dt = new Date()
-    return (dt.toTimeString() + dt.getMilliseconds()).replace(/[^A-Z0-9]/ig, "");
+Playlists = {
+    id: string,
+    title: string,
+    ciphers: cipherIDs[]
 }
 
-// carrega a targetcifra e compila na página 
-const getTargetCifra = () => {
-    let gettingAllStorageItems = browser.storage.local.get("targetcifra");
-    gettingAllStorageItems.then((results) => {
-        const cifra = results.targetcifra
-        if (!cifra.id) {
-            cifra.id = createID()
-            cifra.saved = false
-        } else {
-            cifra.saved = true
+Ciphers = {
+    id: string,
+    title: string,
+    playlists: playlistsIDs[]
+}
+
+*/
+
+
+class Database {
+    constructor() {
+        this.table = { playlists: [], ciphers: [] };
+        browser.storage.local.get(["table"], (result) => {
+            if (result.table) {
+                this.table = result.table;
+            }
+        });
+    }
+
+    saveTable() {
+        browser.storage.local.set({ table: this.table });
+    }
+
+    /* --------------------------------- cipher --------------------------------- */
+
+    // Create a new cipher
+    createCipher(cipherId, title) {
+        const cipher = { id: cipherId, title, playlists: [] };
+        this.table.ciphers.push(cipher);
+        this.saveTable();
+        return cipher;
+    }
+
+    // Update a cipher's name
+    updateCipherName(cipherId, newTitle) {
+        const cipher = this.table.ciphers.find(c => c.id === cipherId);
+        cipher.title = newTitle;
+        this.saveTable();
+    }
+
+    // Delete one or more ciphers
+    deleteCiphers(cipherIds) {
+        // Remove ciphers from table and remove them from playlists
+        for (const cipherId of cipherIds) {
+            this.table.ciphers = this.table.ciphers.filter((c) => c.id !== cipherId);
+            for (const playlist of this.table.playlists) {
+                if (playlist.ciphers.includes(cipherId)) {
+                    this.removeCipherFromPlaylist(cipherId, playlist.id);
+                }
+            }
         }
-        target = cifra
-        console.log(target)
-
-        // usa o DOMParser pois o innerHTML é bloqueado em extensões
-        var doc = new DOMParser().parseFromString(cifra.code, "text/html");
-        const component = doc.querySelector("pre")
-        component.id = "cifra-code"
-        component.contentEditable = true
-        component.removeAttribute("xmlns")
-        component.addEventListener("input", () => {
-            if (target.saved) createCifra()
-        })
-        document.querySelector("#cifra").appendChild(component)
-
-    }, onError);
-}
-
-// função executada ao apertar a seta ao lado do menu de controle
-// esconde ou mostra o menu de controle
-const handleToggleController = () => {
-    const button = document.getElementById("toggleController")
-    const controller = document.getElementById('controller')
-    if (controller.style.translate === "-100%") {
-        controller.style.translate = "0"
-        button.innerText = "◂"
-    } else {
-        controller.style.translate = "-100%"
-        button.innerText = "▸"
-        const addToListTab = document.querySelector(".add-to-list")
-        addToListTab.style.display = "none"
-        document.getElementById("toggleController").style.right = "0"
+        this.saveTable();
     }
-}
 
-const createHTML = (tag, attributes = []) => {
-    const element = document.createElement(tag)
-    attributes.forEach(([name, value]) => {
-        element.setAttribute(name, value)
-    })
-    return element
-}
+    /* -------------------------------- playlist -------------------------------- */
 
+    // Create a new playlist
+    createPlaylist(playlistId, title) {
+        const playlist = { id: playlistId, title, ciphers: [] };
+        this.table.playlists.push(playlist);
+        this.saveTable();
+        return playlist;
+    }
 
-/* -------------------------------------------------------------------------- */
-/*                                configurações                               */
-/* -------------------------------------------------------------------------- */
+    // Update a playlist's name
+    updatePlaylistName(playlistId, newTitle) {
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+        playlist.title = newTitle;
+        this.saveTable();
+    }
 
-// tamanho da letra da cifra
+    // Delete one or more playlists
+    deletePlaylists(playlistIds) {
+        // Remove playlists from table and remove ciphers from playlists
+        for (const playlistId of playlistIds) {
+            this.table.playlists = this.table.playlists.filter((p) => p.id !== playlistId);
+            for (const cipher of this.table.ciphers) {
+                if (cipher.playlists.includes(playlistId)) {
+                    this.removeCipherFromPlaylist(cipher.id, playlistId);
+                }
+            }
+        }
+        this.saveTable();
+    }
 
-let fontSize = 1.5
+    /* ------------------------------- relational ------------------------------- */
 
-const handleDecreaseSize = () => {
-    const cifraCode = document.getElementById("cifra-code")
-    fontSize = fontSize - 0.1
-    cifraCode.style.fontSize = fontSize + "rem"
-    updateCollum()
-}
-const handleIncreaseSize = () => {
-    const cifraCode = document.getElementById("cifra-code")
-    fontSize = fontSize + 0.1
-    cifraCode.style.fontSize = fontSize + "rem"
-    updateCollum()
-}
+    // Add a cipher to a playlist
+    addCipherToPlaylist(cipherId, playlistId) {
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+        const cipher = this.table.ciphers.find(c => c.id === cipherId);
 
-// muda entre modo linha e modo coluna
+        // Check if cipher is already in playlist
+        if (!playlist.ciphers.includes(cipherId)) {
+            playlist.ciphers.push(cipherId);
+        }
 
-const handleDirection = () => {
-    const cifraCode = document.getElementById("cifra-code")
-    const button = document.getElementById("direction")
-    if (button.innerText === "Modo coluna") {
-        button.innerHTML = "<span>Modo linha</span>"
-        cifraCode.style.margin = "auto 0"
-        cifraCode.style.padding = "0 50vw"
+        // Check if playlist is already in cipher's playlists
+        if (!cipher.playlists.includes(playlistId)) {
+            cipher.playlists.push(playlistId);
+        }
 
-        let columnCount = 1
-        while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20) {
-            cifraCode.style.columnCount = columnCount
-            columnCount++
+        this.saveTable();
+    }
+
+    // Remove a cipher from a playlist
+    removeCipherFromPlaylist(cipherId, playlistId) {
+        const playlist = this.table.playlists.find((p) => p.id === playlistId);
+        if (!playlist) {
+            console.error(`Playlist with ID ${playlistId} not found`);
+            return;
+        }
+    
+        const cipher = this.table.ciphers.find((c) => c.id === cipherId);
+        if (!cipher) {
+            console.error(`Cipher with ID ${cipherId} not found`);
+            return;
+        }
+    
+        playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
+        cipher.playlists = cipher.playlists.filter((p) => p !== playlistId);
+        this.saveTable();
+    
+        // Delete cipher if it's not in any playlists
+        if (cipher.playlists.length === 0) {
+            this.deleteCipher(cipher);
         }
     }
-    else {
-        cifraCode.style.margin = "0 auto"
-        cifraCode.style.padding = "50vh 0"
-        cifraCode.style.columnCount = 1
-        button.innerHTML = "<span>Modo coluna</span>"
-    }
 }
 
-const updateCollum = () => {
-    const button = document.getElementById("direction")
-    if (button.innerText === "Modo linha") {
-        const cifraCode = document.getElementById("cifra-code")
-
-        let columnCount = 1
-        do {
-            cifraCode.style.columnCount = columnCount
-            columnCount++
-        } while (cifraCode.clientHeight > window.innerHeight - 60 || columnCount > 20)
-    }
-}
-
-const handleToggleTablatura = () => {
-    const button = document.getElementById("toggleTablatura")
-    const tbList = document.querySelectorAll(".tablatura")
-    if (button.style.backgroundColor === "rgb(95, 86, 111)") {
-        button.style.backgroundColor = "#a191c0"
-        tbList.forEach(tb => {
-            tb.style.display = "block"
-        })
-    } else {
-        button.style.backgroundColor = "rgb(95, 86, 111)"
-        tbList.forEach(tb => {
-            tb.style.display = "none"
-        })
-    }
-}
-
-/* -------------------------------------------------------------------------- */
-/*                                auto rolagem                                */
-/* -------------------------------------------------------------------------- */
-
-let scrolldelay = 30
-
-
-// loop que executa a rolagem infinita
-const autoScrollLoop = () => {
-    window.scrollBy(1, 1);
-    if (scrolldelay) setTimeout(autoScrollLoop, scrolldelay);
-}
-
-// função executada ao apertar play ou pause
-const handleToggleAutoScroll = () => {
-    const button = document.getElementById("toggleAutoScroll")
-    if (scrolldelay) {
-        button.style.paddingLeft = "0.6rem"
-        button.src = "./public/play-button.png"
-        scrolldelay = 0
-    }
-    else {
-        button.style.paddingLeft = "0.5rem"
-        button.src = "./public/pause.png"
-        scrolldelay = document.getElementById("scrollSpeed").value
-        autoScrollLoop()
-    }
-}
-
-// muda a velocidade, mapeia o input range
-const handleScrollSpeed = (event) => {
-    document.getElementById("scrollSpeedDisplay").innerText = event.target.value
-    scrolldelay = event.target.value
-}
-
-/* -------------------------------------------------------------------------- */
-/*                               banco de dados                               */
-/* -------------------------------------------------------------------------- */
-
-const storage = browser.storage.local
-
-/* -------------------------------- playlists ------------------------------- */
-
-const getPlaylists = (callback) => storage.get("playlists").then((response) => {
-    let playlists = {}
-    if (response.playlists) playlists = response.playlists
-    callback(playlists)
-}, onError)
-
-
-const createPlaylist = (callback) => {
-    const name = window.prompt("Digite o nome da playlists")
-    getPlaylists(playlists => {
-        playlists[createID()] = { name, cifras: {} }
-        storage.set({ "playlists": playlists }).then(callback)
-    })
-}
-
-/* --------------------------------- cifras --------------------------------- */
-
-const getCifras = (callback) => storage.get("cifras").then((response) => {
-    let cifras = {}
-    if (response.cifras) cifras = response.cifras
-    callback(cifras)
-}, onError)
-
-
-const createCifra = () => {
-    getCifras(cifras => {
-        const cifra = document.querySelector(".cifra > pre")
-        const code = new XMLSerializer().serializeToString(cifra);
-        target.code = code
-        cifras[target.id] = {
-            title: target.title,
-            author: target.author,
-            date: new Date(),
-            playlists: target.playlists,
-            code: target.code
-        }
-        target.saved = true
-        storage.set({ "cifras": cifras })
-    })
-}
-
-const deleteCifra = () => {
-    getCifras(cifras => {
-        delete cifras[target.id]
-        target.saved = false
-        storage.set({ "cifras": cifras })
-    })
-}
-
-/* -------------------------------------------------------------------------- */
-/*                              adicionar à lista                             */
-/* -------------------------------------------------------------------------- */
-
-const constructorAddToList = (list) => {
-    const container = document.getElementById("playlistcontainer")
-    container.innerText = ""
-
-    list.forEach(playlist => {
-        const component = createHTML("div", [["id", playlist.id]])
-
-        const input = createHTML("input", [["type", "checkbox"], ["name", playlist.id]])
-        input.checked = playlist.contain
-
-        const name = createHTML("span")
-        name.innerText = playlist.name
-
-        component.appendChild(input)
-        component.appendChild(name)
-        component.addEventListener("click", updatePlaylistCifras)
-        container.appendChild(component)
-    })
-}
-
-const updateAddToList = () => {
-    getPlaylists(playlists => {
-        let anyContain = false
-        const list = Object.entries(playlists).map(([id, playlist]) => {
-            const contain = (playlist.cifras[target.id] ? true : false)
-            if (contain) anyContain = true
-            return ({ id, name: playlist.name, contain })
-        })
-        if (anyContain) createCifra()
-        else if (!anyContain && target.saved) deleteCifra()
-
-        constructorAddToList(list)
-    })
-}
-
-const toggleAddToList = () => {
-    const target = document.querySelector(".add-to-list")
-    if (target.style.display === "block") {
-        target.style.display = "none"
-        document.getElementById("toggleController").style.right = "0"
-    } else {
-        target.style.display = "block"
-        document.getElementById("toggleController").style.right = "-15rem"
-        updateAddToList()
-    }
-}
-
-const toggleNewPlaylist = () => {
-    createPlaylist(updateAddToList)
-}
-
-const updatePlaylistCifras = (event) => {
-    let element = event.target
-    while (element.nodeName !== "DIV") element = element.parentNode
-    const id = element.id
-    getPlaylists(playlists => {
-        if (playlists[id].cifras[target.id]) {
-            delete target.playlists[id]
-            delete playlists[id].cifras[target.id]
-        }
-        else {
-            target.playlists[id] = true
-            playlists[id].cifras[target.id] = true
-        }
-        storage.set({ "playlists": playlists }).then(updateAddToList)
-    })
-}
-
-// função principal do sistema, executada em quanto o site é carregado
-// adciona todas as funções do controller
-const main = () => {
-    // carrega a targetcifra e compila na página 
-    getTargetCifra()
-
-    // esconde ou mostra o menu de controle
-    document.getElementById("toggleController").addEventListener("click", handleToggleController)
-
-    // sistema
-    document.getElementById("toggle-add-to-list").addEventListener("click", toggleAddToList)
-    document.getElementById("novaplaylist").addEventListener("click", toggleNewPlaylist)
-    document.getElementById("my-lists").addEventListener("click", () => {
-        window.location.href = "explorer.html";
-    })
-
-    // configurações
-
-    document.getElementById("increaseSize").addEventListener("click", handleIncreaseSize)
-    document.getElementById("decreaseSize").addEventListener("click", handleDecreaseSize)
-    document.getElementById("direction").addEventListener("click", handleDirection)
-    document.getElementById("toggleTablatura").addEventListener("click", handleToggleTablatura)
-
-    // auto rolagem
-
-    document.getElementById("toggleAutoScroll").addEventListener("click", handleToggleAutoScroll)
-    document.getElementById("scrollSpeed").addEventListener("input", handleScrollSpeed)
-    document.getElementById("scrollPrev").addEventListener("click", () => {
-        scrollBy(-250, -250)
-    })
-    document.getElementById("scrollNext").addEventListener("click", () => {
-        scrollBy(250, 250)
-    })
-}
-
-main()

@@ -1,47 +1,24 @@
 {
     "manifest_version": 2,
     "name": "data cifra",
-    "version": "1.1",
+    "version": "2.0",
     "homepage_url": "https://github.com/marcusvpires/data-cifras",
     "description": "Extensão para chrome e firefox que serve como uma extensão ao cifra club. A Data cifra permite que você salve, edite e categorize as cifras, além de trazer várias ferramentas que ajudam a visualizar toda a cifra em quanto toca a musica.",
     "icons": {
-        "48": "media/logo-48.png",
-        "96": "media/logo-96.png"
+        "96": "media/logo-48.png",
+        "48": "media/logo-96.png"
     },
     "permissions": [
-        "activeTab",
-        "*://*.cifraclub.com.br/*",
         "storage",
         "tabs"
     ],
+    "browser_action": {
+        "default_icon": "icons/star-empty-38.png",
+        "default_title": "Bookmark it!"
+    },
     "background": {
         "scripts": [
             "background.js"
         ]
-    },
-    "web_accessible_resources": [
-        "media/logo-48.png",
-        "media/logo-96.png",
-        "app/public/fast-forward.png",
-        "app/public/pause.png",
-        "app/public/play-button.png",
-        "app/public/rewind.png",
-        "media/logo-96-black.png",
-        "media/logo-96-white.png"
-    ],
-    "content_scripts": [
-        {
-            "matches": [
-                "*://*.cifraclub.com.br/*"
-            ],
-            "js": [
-                "content.js"
-            ],
-            "css": [
-                "content.css"
-            ],
-
-            "run_at": "document_end"
-        }
-    ]
+    }
 }
