@@ -25,14 +25,15 @@
   </header>
   <main>
     <div class="toolbar" style="">
-      <div class="title">
+      <div class="title" id="playlists">
         PLAYLISTS
       </div>
       <div class="toolbar-btns">
-        <button class="btn">Nova Playlist</button>
-        <button class="btn">Renomear</button>
-        <button class="btn">Excluir</button>
-        <button class="btn">Abrir</button>
+        <button id="btn-novo-item" class="btn">Nova Playlist</button>
+        <button id="btn-renomear" class="btn">Renomear</button>
+        <button id="btn-excluir" class="btn">Excluir</button>
+        <button id="btn-abrir" class="btn">Abrir</button>
+
       </div>
     </div>
     <table>
@@ -48,7 +49,6 @@
           <td><label class="checkbox-container">
               <input type="checkbox">
               <span class="checkmark"></span>
-
             </label>
           </td>
           <td>Playlist 1</td>
@@ -58,7 +58,6 @@
           <td><label class="checkbox-container">
               <input type="checkbox">
               <span class="checkmark"></span>
-
             </label></td>
           <td>Playlist 2</td>
           <td>5</td>
@@ -66,5 +65,7 @@
       </tbody>
     </table>
   </main>
+  <script src="./scripts.js"></script>
 </body>
+
 </html>

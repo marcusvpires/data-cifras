@@ -17,33 +17,37 @@ body {
   background-color: var(--background)
 }
 
-header {
-  background-color: var(--sec-background);
-  color: var(--light-gray);
-  padding: 1rem;
+main {
+  min-height: calc(100vh - 64px);
   display: flex;
-  align-items: center
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
-.logo {
-  font-size: 1.5rem;
-  font-weight: 100;
-  margin-right: auto;
-  display: flex;
-  align-items: center;
-  font-style: unicase
-}
 
 a {
   text-decoration: none;
   color: inherit
 }
 
+/* --------------------------------- header --------------------------------- */
+
+header {
+  background-color: var(--sec-background);
+  color: var(--light-gray);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 100%
+  width: 90%;
+  max-width: 900px;
 }
 
 nav ul {
@@ -58,54 +62,13 @@ nav a:hover {
   transition: .2s
 }
 
-.table {
-  margin: 50px auto;
-  max-width: 800px;
-  width: 100%;
-  background-color: var(--sec-background);
-  border-radius: 10px
-}
-
-.table__header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  border-bottom: 1px solid var(--eggplant)
-}
-
-.table__title {
-  color: var(--color-primary);
+.logo {
   font-size: 1.5rem;
-  font-weight: 700
-}
-
-.table__button {
-  background-color: var(--electric-purple);
-  color: var(--light-gray);
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color .3s ease
-}
-
-.table__button:hover {
-  background-color: var(--violet)
-}
-
-.table__checkbox {
-  margin-right: 10px
-}
-
-.title {
-  font-size: 2.2rem;
-  font-weight: BOLD;
-  margin: 20px;
-  margin-top: 50px;
-  max-width: 500px;
-  width: 100%
+  font-weight: 100;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  font-style: unicase
 }
 
 .logo img {
@@ -113,37 +76,40 @@ nav a:hover {
   width: 30px
 }
 
-.menu li {
-  margin-left: 15px
+.logo a:hover {
+  color: var(--light-gray)
 }
 
 .logo a {
   margin-left: 15px
 }
 
-.menu a {
-  color: var(--color-primary)
-}
-
-.logo a:hover {
-  color: var(--light-gray)
-}
-
-main {
-  min-height: calc(100vh - 64px);
-  display: flex;
-  flex-direction: column;
-  align-items: center
-}
+/* --------------------------------- toolbar -------------------------------- */
 
 .toolbar {
   height: 220px;
-  background: linear-gradient(0deg, rgba(16, 12, 17, 1) 27%, rgba(58, 55, 65, 1) 69%, rgba(136, 122, 139, 1) 100%);
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  width: 100%
+  width: 100%;
+  background: linear-gradient(0deg, rgba(16, 12, 17, 1) 27%, rgba(58, 55, 65, 1) 69%, rgba(136, 122, 139, 1) 100%);
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: BOLD;
+  max-width: 570px;
+  width: 100%;
+  margin: 50px 0 0 70px;
+}
+
+.menu li {
+  margin-left: 15px
+}
+
+.menu a {
+  color: var(--color-primary)
 }
 
 .btn {
@@ -161,15 +127,53 @@ main {
   margin: 0 5px
 }
 
+.toolbar-btns {
+  display: flex;
+  justify-content: left;
+  margin: 70px 0 0 70px;
+  max-width: 570px;
+  width: 100%
+}
+
+/* ---------------------------------- table --------------------------------- */
+
 table {
   height: auto;
-  width: 100vw;
-  padding: 40px;
-  max-width: 725px
+  margin: 50px 70px 0 0;
+  max-width: 570px;
+  width: 100%;
 }
 
 th {
   text-align: left
+}
+
+tr th {
+  padding: 20px 0
+}
+
+td {
+  height: 50px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.table__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--eggplant)
+}
+
+.table__title {
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  font-weight: 700
+}
+
+.table__checkbox {
+  margin-right: 10px
 }
 
 .checkbox-container {
@@ -220,22 +224,6 @@ th {
   text-align: center;
   font-size: 14px;
   color: #fff
-}
-
-.toolbar-btns {
-  display: flex;
-  justify-content: left;
-  margin-top: 70px;
-  max-width: 500px;
-  width: 100%
-}
-
-tr th {
-  padding: 20px 0
-}
-
-td {
-  height: 50px
 }
 
 #checkbox-head {
