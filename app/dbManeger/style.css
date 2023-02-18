@@ -1,0 +1,244 @@
+:root {
+  --background: #100C11;
+  --sec-background: #000;
+  --eggplant: #4F2D4A;
+  --violet: #6F368F;
+  --electric-purple: #BF00FF;
+  --light-gray: #ddd;
+  --medium-gray: #999;
+  --color-primary: #c19dce
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--light-gray);
+  background-color: var(--background)
+}
+
+main {
+  min-height: calc(100vh - 64px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+
+a {
+  text-decoration: none;
+  color: inherit
+}
+
+/* --------------------------------- header --------------------------------- */
+
+header {
+  background-color: var(--sec-background);
+  color: var(--light-gray);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 90%;
+  max-width: 900px;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+  padding: 0
+}
+
+nav a:hover {
+  color: var(--electric-purple);
+  transition: .2s
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 100;
+  margin-right: auto;
+  display: flex;
+  align-items: center;
+  font-style: unicase
+}
+
+.logo img {
+  height: 30px;
+  width: 30px
+}
+
+.logo a:hover {
+  color: var(--light-gray)
+}
+
+.logo a {
+  margin-left: 15px
+}
+
+/* --------------------------------- toolbar -------------------------------- */
+
+.toolbar {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background: linear-gradient(0deg, rgba(16, 12, 17, 1) 40%, rgba(107, 97, 119, 1) 100%);
+}
+
+.title {
+  font-size: 2.2rem;
+  font-weight: BOLD;
+  max-width: 570px;
+  width: 100%;
+  margin: 50px 0 0 70px;
+}
+
+.menu li {
+  margin-left: 15px
+}
+
+.menu a {
+  color: var(--color-primary)
+}
+
+.btn {
+  background-color: #6f368F4A;
+  color: var(--light-gray);
+  border: var(--violet) 1px solid;
+  border-radius: 2px;
+  padding: 8px 18px;
+  font-size: .7rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all .2s ease-in-out;
+  cursor: pointer;
+  margin: 0 5px
+}
+
+.toolbar-btns {
+  display: flex;
+  justify-content: left;
+  margin: 70px 0 0 70px;
+  max-width: 570px;
+  width: 100%
+}
+
+
+.return-to-playlists {
+  font-size: 0.8rem;
+  font-weight: BOLD;
+  max-width: 570px;
+  width: 100%;
+  margin: 20px 0 0 70px;
+  cursor: pointer;
+  background-color: unset;
+  border: unset;
+  padding: unset;
+  text-transform: unset;
+}
+
+/* ---------------------------------- table --------------------------------- */
+
+table {
+  height: auto;
+  margin: 50px 70px 0 0;
+  max-width: 570px;
+  width: 100%;
+}
+
+th {
+  text-align: left
+}
+
+tr th {
+  padding: 20px 0
+}
+
+td {
+  height: 50px;
+  user-select: none;
+  cursor: pointer;
+}
+
+.table__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--eggplant)
+}
+
+.table__title {
+  color: var(--color-primary);
+  font-size: 1.5rem;
+  font-weight: 700
+}
+
+.table__checkbox {
+  margin-right: 10px
+}
+
+.checkbox-container {
+  display: inline-block;
+  position: relative;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  user-select: none
+}
+
+.checkbox-container input[type=checkbox] {
+  display: none
+}
+
+.checkbox-container .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 20px;
+  width: 20px;
+  border: 2px solid indigo;
+  border-radius: 4px;
+  transition: all .2s ease-in-out;
+  translate: 50% -30%;
+  scale: .7
+}
+
+.checkbox-container:hover .checkmark {
+  border-color: #6a5acd
+}
+
+.checkbox-container input[type=checkbox]:checked+.checkmark {
+  background-color: indigo;
+  border-color: indigo
+}
+
+.checkbox-container input[type=checkbox]:checked+.checkmark::after {
+  content: "\2713";
+  display: block;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  font-size: 14px;
+  color: #fff
+}
+
+#checkbox-head {
+  width: 70px
+}
