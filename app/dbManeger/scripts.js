@@ -24,6 +24,13 @@ Ciphers = {
 */
 
 
+function createID() {
+    const timestamp = new Date().getTime();
+    const random = Math.floor(Math.random() * 1000000);
+    return `${timestamp}-${random}`;
+}
+
+
 class Database {
     constructor(callback) {
         this.table = { playlists: [], ciphers: [] };
@@ -41,6 +48,10 @@ class Database {
     }
 
     /* --------------------------------- cipher --------------------------------- */
+
+    getCipherById(cipherId) {
+        return this.table.ciphers.find(cipher => cipher.id === cipherId);
+    }
 
     // Create a new cipher
     createCipher(cipherId, title, playlistId = null) {
@@ -259,6 +270,17 @@ function addButtonEventListeners() {
                             database.openPlaylistById(playlistID)
                             createCiphersLayout(playlistID)
                             updateHTMLTable()
+                        }
+                    } else {
+                        var cipherID = getCheckedRows()[0]
+                        if (cipherID) {
+                            const cipher = database.getCipherById(cipherID)
+                            if (cipher) browser.storage.local.set({ targetCipher: cipher }).then(browser.tabs.create({ "url": "/app/index.html" }));
+                            else {
+                                console.log('cipher not exist')
+                            }
+                        } else {
+                            console.log('cipher not exist')
                         }
                     }
                     break;

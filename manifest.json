@@ -9,16 +9,28 @@
         "48": "media/logo-96.png"
     },
     "permissions": [
+        "activeTab",
         "storage",
         "tabs"
     ],
     "browser_action": {
-        "default_icon": "icons/star-empty-38.png",
-        "default_title": "Bookmark it!"
+        "default_icon": "media/logo-48.png",
+        "default_title": "Data Cifras"
     },
     "background": {
         "scripts": [
             "background.js"
         ]
-    }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "*://*.cifraclub.com.br/*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "run_at": "document_end"
+        }
+    ]
 }

@@ -1,71 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 
 <head>
-  <meta charset="UTF-8">
-  <title>DATA CIFRAS</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../media/logo-48.png" type="image/png">
+    <link rel="stylesheet" href="styles.css">
+    <title>data cifra</title>
 </head>
 
 <body>
-  <header>
-    <nav>
-      <div class="logo">
-        <img src="..\media\logo-96.png"><a href="#">DATA CIFRAS</a>
-      </div>
-      <div class="menu">
-        <ul>
-          <li><a href="#">Cifra</a></li>
-          <li><a href="#">Sobre</a></li>
-
-          <li><a href="#">Configurações</a></li>
-        </ul>
-      </div>
-    </nav>
-  </header>
-  <main>
-    <div class="toolbar" style="">
-      <div class="title" id="playlists">
-        PLAYLISTS
-      </div>
-      <div class="toolbar-btns">
-        <button id="btn-novo-item" class="btn">Nova Playlist</button>
-        <button id="btn-renomear" class="btn">Renomear</button>
-        <button id="btn-excluir" class="btn">Excluir</button>
-        <button id="btn-abrir" class="btn">Abrir</button>
-
-      </div>
-    </div>
-    <table>
-      <thead>
-        <tr>
-          <th id="checkbox-head"></th>
-          <th id="title-head">Playlist</th>
-          <th id="relation-head">Cifras</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><label class="checkbox-container">
-              <input type="checkbox">
-              <span class="checkmark"></span>
-            </label>
-          </td>
-          <td>Playlist 1</td>
-          <td>10</td>
-        </tr>
-        <tr>
-          <td><label class="checkbox-container">
-              <input type="checkbox">
-              <span class="checkmark"></span>
-            </label></td>
-          <td>Playlist 2</td>
-          <td>5</td>
-        </tr>
-      </tbody>
-    </table>
-  </main>
-  <script src="./scripts.js"></script>
+    <ul id="controller">
+        <button id="controller-toggler">
+            <div>◂</div>
+        </button>
+        <li class="controller-section">
+            <h3 class="controller-section-title">SISTEMA</h3>
+            <button id="open-db-manager">
+                <img src="./public/playlist.svg" alt="list icon">
+                <span>Minhas listas</span>
+            </button>
+            <button id="toggle-playlists">
+                <img src="./public/list-plus.svg" alt="plus icon">
+                <span>Adcionar à lista</span>
+            </button>
+            <div id="playlists-bar">
+                <ul id="playlists"> </ul>
+                <button id="create-playlist">
+                    <span>Nova playlist</span>
+                </button>
+            </div>
+        </li>
+        <li class="controller-section">
+            <h3 class="controller-section-title">CONFIGURAÇÕES</h3>
+            <div class="change-text-size">
+                <button id="decrease-size">
+                    <span>A</span>
+                </button>
+                <span>Tamanho</span>
+                <button id="increase-size">
+                    <span>A</span>
+                </button>
+            </div>
+            <button id="cipher-direction">
+                <img src="./public/column.svg" alt="column icon">
+                <span>Modo coluna</span>
+            </button>
+            <button id="toggleTablatura">
+                <img src="./public/spreadsheet.svg" alt="tab icon">
+                <span>Tablatura</span>
+            </button>
+        </li>
+        <li class="controller-section">
+            <h3 class="controller-section-title">AUTO ROLAGEM</h3>
+            <div class="scroll">
+                <button id="skip-scroll-backward">
+                    <img src="./public/rewind.svg">
+                </button>
+                <button id="play-pause-scroll">
+                    <img src="./public/play.svg">
+                </button>
+                <button id="skip-scroll-forward">
+                    <img src="./public/fast-forward.svg">
+                </button>
+                <button id="scroll-speend-display">
+                    <span id="scroll-speend-display">30</span>
+                </button>
+            </div>
+            <input id="scroll-speed" type="range" value="30" min="1" max="201" step="1">
+        </li>
+    </ul>
+    <div class="cifra" id="cifra"></div>
+    <script src="script.js"></script>
 </body>
 
 </html>

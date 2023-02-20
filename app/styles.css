@@ -1,0 +1,275 @@
+/* Reset styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Global styles */
+
+body {
+    background-color: #1c1e22;
+    color: #d9d9d9;
+    font-family: "Segoe UI", sans-serif;
+    font-size: 16px;
+}
+
+ul {
+    list-style: none;
+}
+
+button {
+    padding: 0;
+    background-color: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+img {
+    display: block;
+    height: 17px;
+    width: 17px;
+    filter: invert(1);
+}
+
+/* -------------------------------------------------------------------------- */
+/*                              Controller styles                             */
+/* -------------------------------------------------------------------------- */
+
+#controller {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 270px;
+    height: 100vh;
+
+    margin: 0;
+    padding: 20px;
+    list-style: none;
+    border-right: 1px solid #42464a;
+    background-color: #14171a;
+    color: #ddd;
+    transition: transform 0.3s;
+}
+
+#controller-toggler {
+    position: absolute;
+    top: 50%;
+    translate: 0 -50%;
+    height: 60px;
+    width: 35px;
+    margin: 0;
+    padding: 0;
+    left: 270px;
+
+    border-radius: 0 3px 3px 0;
+    background-color: #9D4B9D;
+
+    transition: transform 0.3s;
+}
+
+#controller-toggler div {
+    transform: rotate(0deg);
+    font-size: 27px;
+    color: #fff;
+    line-height: 0.8;
+    transition: transform 0.3s;
+}
+
+#controller.hide {
+    transform: translateX(-270px);
+}
+
+.hide #controller-toggler div {
+    transform: rotate(180deg) !important;
+}
+
+.controller-section {
+    border-bottom: 1px solid #2F3336;
+    padding: 10px 10px;
+}
+
+.controller-section-title {
+    font-size: 15px;
+    margin: 15px 0 8px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.controller-section button {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+    border: 1px solid #745599;
+    padding: 8px 10px;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 1px 1px 1px #38294a;
+}
+
+.controller-section button img {
+    margin-right: 10px;
+}
+
+.change-text-size {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.change-text-size button {
+    width: 40px !important;
+    border-radius: 10px !important;
+    display: flex;
+    justify-content: center;
+}
+
+.controller-section button.checked {
+    background-color: black !important;
+}
+
+#decrease-size {
+    font-size: 10px;
+    line-height: 16px;
+}
+
+#playlists-bar {
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    width: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #42464a;
+    background-color: #14171a;
+    overflow-x: hidden;
+    transition: 0.3s;
+}
+
+#playlists-bar ul {
+    overflow-y: auto;
+    overflow-x: hidden;
+    flex-grow: 1;
+}
+
+.expanded #playlists-bar {
+    right: -251px !important;
+    width: 250px !important;
+    padding: 15px !important;
+}
+
+.expanded #controller-toggler {
+    transform: translate(250px);
+}
+
+.scroll {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+
+.scroll button {
+    width: 40px !important;
+    border-radius: 10px !important;
+    display: flex;
+    justify-content: center;
+}
+
+.scroll img {
+    height: 20px;
+    width: 20px;
+    margin: 0 !important;
+}
+
+#open-db-manager img {
+    height: 14px;
+    width: 14px;
+}
+
+#scroll-speed {
+    width: 100%;
+}
+
+.checkbox-container {
+    display: inline-block;
+    position: relative;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    user-select: none
+}
+
+.checkbox-container input[type=checkbox] {
+    display: none
+}
+
+.checkbox-container .checkmark {
+    position: absolute;
+    top: 1px;
+    left: 0;
+    height: 20px;
+    width: 20px;
+    border: 2px solid indigo;
+    border-radius: 4px;
+    transition: all .2s ease-in-out;
+    translate: 50% -30%;
+    scale: .7
+}
+
+.checkbox-container:hover .checkmark {
+    border-color: #6a5acd
+}
+
+.checkbox-container input[type=checkbox]:checked+.checkmark {
+    background-color: indigo;
+    border-color: indigo
+}
+
+.checkbox-container input[type=checkbox]:checked+.checkmark::after {
+    content: "\2713";
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-size: 14px;
+    color: #fff
+}
+
+.playlists__name {
+    margin-left: 25px;
+}
+
+#playlists li {
+    width: 219px;
+    padding: 15px 0;
+    cursor: pointer;
+}
+
+#create-playlist {
+    width: 219px;
+}
+
+#cifra pre {
+    width: fit-content;
+    margin: 0 auto;
+    padding: 50vh 0;
+    font-family: "Roboto Mono", "Courier New", "Courier", monospace;
+    line-height: 1.6;
+    font-size: 1.5rem;
+  }
+  
+  .cifra pre b {
+      color: #f90;
+  }
+  

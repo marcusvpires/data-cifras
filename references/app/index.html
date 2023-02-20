@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>DATA CIFRAS</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header>
+    <nav>
+      <div class="logo">
+        <img src="..\media\logo-96.png"><a href="#">DATA CIFRAS</a>
+      </div>
+      <div class="menu">
+        <ul>
+          <li><a href="#">Cifra</a></li>
+          <li><a href="#">Sobre</a></li>
+
+          <li><a href="#">Configurações</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+  <main>
+    <div class="toolbar" style="">
+      <div class="title" id="playlists">
+        PLAYLISTS
+      </div>
+      <div class="toolbar-btns">
+        <button id="btn-novo-item" class="btn">Nova Playlist</button>
+        <button id="btn-renomear" class="btn">Renomear</button>
+        <button id="btn-excluir" class="btn">Excluir</button>
+        <button id="btn-abrir" class="btn">Abrir</button>
+
+      </div>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th id="checkbox-head"></th>
+          <th id="title-head">Playlist</th>
+          <th id="relation-head">Cifras</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><label class="checkbox-container">
+              <input type="checkbox">
+              <span class="checkmark"></span>
+            </label>
+          </td>
+          <td>Playlist 1</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td><label class="checkbox-container">
+              <input type="checkbox">
+              <span class="checkmark"></span>
+            </label></td>
+          <td>Playlist 2</td>
+          <td>5</td>
+        </tr>
+      </tbody>
+    </table>
+  </main>
+  <script src="./scripts.js"></script>
+</body>
+
+</html>
