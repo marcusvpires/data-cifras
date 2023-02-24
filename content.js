@@ -17,7 +17,7 @@ const scrapCode = () => {
     const title = prompt("Enter title:", `${name} (${author})`);
     const settings = { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }
     if (title) {
-      return ({ id: createID(), title, code, settings })
+      return ({ id: createID(), title, code, settings, playlists: [] })
     } else {
       alert("O titulo não pode ser nulo")
       console.error("data cifras: Title is empty");

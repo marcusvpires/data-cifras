@@ -107,8 +107,8 @@ class Database {
         else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
         this.save();
     }
-    
-    updateCipherSettings (id, newSettings) {
+
+    updateCipherSettings(id, newSettings) {
         const cipher = this.ciphers.find(c => c.id === id);
         if (cipher) cipher.settings = newSettings
         else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
@@ -120,7 +120,10 @@ class Database {
             // Filter out the cipher with this ID from the "ciphers" array in the table
             this.ciphers = this.ciphers.filter((c) => c.id !== id);
             // Filter out the cipher with this ID from the "ciphers" array in the playlist
-            this.playlists = this.playlists.map(p => p.ciphers.filter((c) => c !== id))
+            this.playlists = this.playlists.map(p => {
+                p.ciphers = p.ciphers.filter((c) => c !== id)
+                return p
+        })
         }
         this.save();
     }
@@ -142,12 +145,24 @@ class Database {
         return id;
     }
 
-    deletePlaylist(Ids) {
+    renamePlaylists(playlistIds, newTitle) {
+        if (!newTitle) throw new Error("The title is required to create a new cipher")
+        playlistIds.forEach((id, i) => {
+            this.playlists = this.playlists.map(p => {
+                if (p.id === id) p.title = i === 0 ? newTitle : `${newTitle} (${i})`;
+                return p
+            });
+        })
+        this.save();
+    }
+
+    deletePlaylists(Ids) {
         for (const id of Ids) {
-            // Filter out the playlist with this ID from the "playlists" array in the table
             this.playlists = this.playlists.filter((p) => p.id !== id);
-            // Filter out the playlist with this ID from the "playlists" array in the cipher
-            this.ciphers = this.ciphers.map(p => p.playlists.filter((p) => p !== id))
+            this.ciphers = this.ciphers.map(c => {
+                c.playlists = c.playlists.filter((p) => p !== id)
+                return c
+            })
         }
         this.save();
     }
@@ -173,6 +188,17 @@ class Database {
             }
         }
         this.save()
+    }
+
+    getCiphersInPlaylist(playlistId) {
+        const playlist = this.playlists.find(p => p.id === playlistId);
+        if (!playlist) throw new Error(`Unable to find playlist with id: ${playlistId}`);
+
+        return playlist.ciphers.map(cipherId => {
+            const cipher = this.ciphers.find(c => c.id === cipherId);
+            if (!cipher) throw new Error(`Unable to find cipher with id: ${cipherId}`);
+            return cipher;
+        });
     }
 
     // Remove a cipher from a playlist

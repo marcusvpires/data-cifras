@@ -60,7 +60,7 @@ const bevs = {
         let ct = document.getElementById('controller')
         ct.classList.contains("hide") ? ct.className = "" : ct.className = "hide"
     },
-    openLibrary: () => window.location.href = "./library/index.html",
+    openLibrary: () => window.location.href = "../library/index.html",
     togglePlaylistsChecklist: () => {
         updatePlaylistsChecklist()
         let ct = document.getElementById('controller')
