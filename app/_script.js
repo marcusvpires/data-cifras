@@ -30,214 +30,214 @@ function createID() {
 }
 
 
-    class Database {
-        constructor() {
-            this.table = { playlists: [], ciphers: [] };
-            browser.storage.local.get(["table"], (result) => {
-                if (result.table) {
-                    this.table = result.table;
-                }
-            });
-            browser.storage.local.get("targetCipher").then((results) => {
-                const cifra = results.targetCipher;
-                cifra.id = cifra.id || createID();
-                cifra.playlists = cifra.playlists || []
-                console.log(cifra.title)
-                this.targetCipher = cifra;
-                injectCipher(this.targetCipher);
-            });
-        }
-
-        updateTable() {
-            updatePlaylistsUl()
-            this.targetCipher = this.getCipherById(this.targetCipher.id) || this.targetCipher
-            browser.storage.local.set({ table: this.table, targetCipher: this.targetCipher });
-        }
-
-        /* --------------------------------- cipher --------------------------------- */
-
-        getCipherById(cipherId) {
-            return this.table.ciphers.find(cipher => cipher.id === cipherId);
-        }
-
-        // Create a new cipher
-        createCipher(cipherId, title, playlistId = null, code = "") {
-            const cipher = { id: cipherId, title, playlists: [], code: code };
-            this.table.ciphers.push(cipher);
-
-            if (playlistId !== null) {
-                this.addCipherToPlaylist(cipherId, playlistId);
+class Database {
+    constructor() {
+        this.table = { playlists: [], ciphers: [] };
+        browser.storage.local.get(["table"], (result) => {
+            if (result.table) {
+                this.table = result.table;
             }
+        });
+        browser.storage.local.get("targetCipher").then((results) => {
+            const cifra = results.targetCipher;
+            cifra.id = cifra.id || createID();
+            cifra.playlists = cifra.playlists || []
+            console.log(cifra.title)
+            this.targetCipher = cifra;
+            injectCipher(this.targetCipher);
+        });
+    }
 
-            this.updateTable();
-            return cipher;
+    updateTable() {
+        updatePlaylistsUl()
+        this.targetCipher = this.getCipherById(this.targetCipher.id) || this.targetCipher
+        browser.storage.local.set({ table: this.table, targetCipher: this.targetCipher });
+    }
+
+    /* --------------------------------- cipher --------------------------------- */
+
+    getCipherById(cipherId) {
+        return this.table.ciphers.find(cipher => cipher.id === cipherId);
+    }
+
+    // Create a new cipher
+    createCipher(cipherId, title, playlistId = null, code = "") {
+        const cipher = { id: cipherId, title, playlists: [], code: code };
+        this.table.ciphers.push(cipher);
+
+        if (playlistId !== null) {
+            this.addCipherToPlaylist(cipherId, playlistId);
         }
 
-        renameCiphers(cipherIds, newName) {
-            for (const cipherId of cipherIds) {
-                const cipher = this.table.ciphers.find(c => c.id === cipherId);
-                if (cipher) {
-                    cipher.title = newName;
-                }
-            }
-            this.updateTable();
-        }
+        this.updateTable();
+        return cipher;
+    }
 
-
-        // Delete one or more ciphers
-        deleteCiphers(cipherIds) {
-            // Remove ciphers from table and remove them from playlists
-            for (const cipherId of cipherIds) {
-                this.table.ciphers = this.table.ciphers.filter((c) => c.id !== cipherId);
-                for (const playlist of this.table.playlists) {
-                    playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
-                }
-            }
-            this.updateTable();
-        }
-
-        updateCipherCode(cipherId, newCode) {
-            const targetCipher = this.targetCipher
-            const cipher = this.getCipherById(cipherId);
-            targetCipher.code = newCode
+    renameCiphers(cipherIds, newName) {
+        for (const cipherId of cipherIds) {
+            const cipher = this.table.ciphers.find(c => c.id === cipherId);
             if (cipher) {
-                cipher.code = newCode;
-                this.updateTable();
-            } else {
-                console.error(`Cipher with ID ${cipherId} not found`);
+                cipher.title = newName;
             }
         }
+        this.updateTable();
+    }
 
-        /* -------------------------------- playlist -------------------------------- */
 
-        getPlaylistsFilter() {
-            const playlists = this.table.playlists;
-            const result = [];
-
-            for (let i = 0; i < playlists.length; i++) {
-                const playlist = playlists[i];
-                const containsTargetCipher = this.targetCipher && playlist.ciphers.includes(this.targetCipher.id);
-                result.push({ containsTargetCipher, playlist });
-            }
-
-            return result;
-        }
-
-        renamePlaylists(playlistIds, name) {
-            for (let i = 0; i < playlistIds.length; i++) {
-                const playlist = this.table.playlists.find(p => p.id === playlistIds[i]);
-                if (playlist) {
-                    const newName = i === 0 ? name : `${name} (${i})`;
-                    playlist.title = newName;
-                    this.updateTable();
-                }
+    // Delete one or more ciphers
+    deleteCiphers(cipherIds) {
+        // Remove ciphers from table and remove them from playlists
+        for (const cipherId of cipherIds) {
+            this.table.ciphers = this.table.ciphers.filter((c) => c.id !== cipherId);
+            for (const playlist of this.table.playlists) {
+                playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
             }
         }
+        this.updateTable();
+    }
 
-        // Create a new playlist
-        createPlaylist(playlistId, title) {
-            const playlist = { id: playlistId, title, ciphers: [] };
-            this.table.playlists.push(playlist);
+    updateCipherCode(cipherId, newCode) {
+        const targetCipher = this.targetCipher
+        const cipher = this.getCipherById(cipherId);
+        targetCipher.code = newCode
+        if (cipher) {
+            cipher.code = newCode;
             this.updateTable();
-            return playlist;
-        }
-
-        // Update a playlist's name
-        updatePlaylistName(playlistId, newTitle) {
-            const playlist = this.table.playlists.find(p => p.id === playlistId);
-            playlist.title = newTitle;
-            this.updateTable();
-        }
-
-        // Delete one or more playlists
-        deletePlaylists(playlistIds) {
-            // Remove playlists from table and remove ciphers from playlists
-            for (const playlistId of playlistIds) {
-                this.table.playlists = this.table.playlists.filter((p) => p.id !== playlistId);
-                for (const cipher of this.table.ciphers) {
-                    if (cipher.playlists.includes(playlistId)) {
-                        this.removeCipherFromPlaylist(cipher.id, playlistId);
-                    }
-                }
-            }
-            this.updateTable();
-        }
-
-        /* ------------------------------- relational ------------------------------- */
-
-        // Add a cipher to a playlist
-        addCipherToPlaylist(cipherId, playlistId) {
-            let cipher = this.table.ciphers.find(c => c.id === cipherId);
-            if (!cipher) {
-                cipher = this.createCipher(cipherId, this.targetCipher.title, playlistId, this.targetCipher.code);
-            }
-
-            const playlist = this.table.playlists.find(p => p.id === playlistId);
-
-            if (!playlist.ciphers.includes(cipherId)) {
-                playlist.ciphers.push(cipherId);
-            }
-
-            if (!cipher.playlists.includes(playlistId)) {
-                cipher.playlists.push(playlistId);
-            }
-
-            this.updateTable();
-        }
-
-        // Remove a cipher from a playlist
-        removeCipherFromPlaylist(cipherId, playlistId) {
-            const playlist = this.table.playlists.find((p) => p.id === playlistId);
-            if (!playlist) {
-                console.error(`Playlist with ID ${playlistId} not found`);
-                return;
-            }
-
-            const cipher = this.table.ciphers.find((c) => c.id === cipherId);
-            if (!cipher) {
-                console.error(`Cipher with ID ${cipherId} not found`);
-                return;
-            }
-
-            playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
-            cipher.playlists = cipher.playlists.filter((p) => p !== playlistId);
-            this.updateTable();
-
-            // Delete cipher if it's not in any playlists
-            if (cipher.playlists.length === 0) {
-                this.deleteCipher(cipher);
-            }
-        }
-
-        openPlaylistById(playlistId) {
-            const playlist = this.table.playlists.find(p => p.id === playlistId);
-            if (playlist) {
-                this.targetPlaylist = playlist;
-                this.targetPlaylistID = playlistId;
-            }
-            return playlist;
-        }
-
-        getCiphersInPlaylist(playlistId) {
-            const playlist = this.table.playlists.find(p => p.id === playlistId);
-            if (!playlist) {
-                console.error(`Playlist with ID ${playlistId} not found`);
-                return [];
-            }
-
-            const ciphers = [];
-            for (const cipherId of playlist.ciphers) {
-                const cipher = this.table.ciphers.find(c => c.id === cipherId);
-                if (cipher) {
-                    ciphers.push(cipher);
-                } else {
-                    console.error(`Cipher with ID ${cipherId} not found in playlist ${playlist.title}`);
-                }
-            }
-
-            return ciphers;
+        } else {
+            console.error(`Cipher with ID ${cipherId} not found`);
         }
     }
+
+    /* -------------------------------- playlist -------------------------------- */
+
+    getPlaylistsFilter() {
+        const playlists = this.table.playlists;
+        const result = [];
+
+        for (let i = 0; i < playlists.length; i++) {
+            const playlist = playlists[i];
+            const containsTargetCipher = this.targetCipher && playlist.ciphers.includes(this.targetCipher.id);
+            result.push({ containsTargetCipher, playlist });
+        }
+
+        return result;
+    }
+
+    renamePlaylists(playlistIds, name) {
+        for (let i = 0; i < playlistIds.length; i++) {
+            const playlist = this.table.playlists.find(p => p.id === playlistIds[i]);
+            if (playlist) {
+                const newName = i === 0 ? name : `${name} (${i})`;
+                playlist.title = newName;
+                this.updateTable();
+            }
+        }
+    }
+
+    // Create a new playlist
+    createPlaylist(playlistId, title) {
+        const playlist = { id: playlistId, title, ciphers: [] };
+        this.table.playlists.push(playlist);
+        this.updateTable();
+        return playlist;
+    }
+
+    // Update a playlist's name
+    updatePlaylistName(playlistId, newTitle) {
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+        playlist.title = newTitle;
+        this.updateTable();
+    }
+
+    // Delete one or more playlists
+    deletePlaylists(playlistIds) {
+        // Remove playlists from table and remove ciphers from playlists
+        for (const playlistId of playlistIds) {
+            this.table.playlists = this.table.playlists.filter((p) => p.id !== playlistId);
+            for (const cipher of this.table.ciphers) {
+                if (cipher.playlists.includes(playlistId)) {
+                    this.removeCipherFromPlaylist(cipher.id, playlistId);
+                }
+            }
+        }
+        this.updateTable();
+    }
+
+    /* ------------------------------- relational ------------------------------- */
+
+    // Add a cipher to a playlist
+    addCipherToPlaylist(cipherId, playlistId) {
+        let cipher = this.table.ciphers.find(c => c.id === cipherId);
+        if (!cipher) {
+            cipher = this.createCipher(cipherId, this.targetCipher.title, playlistId, this.targetCipher.code);
+        }
+
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+
+        if (!playlist.ciphers.includes(cipherId)) {
+            playlist.ciphers.push(cipherId);
+        }
+
+        if (!cipher.playlists.includes(playlistId)) {
+            cipher.playlists.push(playlistId);
+        }
+
+        this.updateTable();
+    }
+
+    // Remove a cipher from a playlist
+    removeCipherFromPlaylist(cipherId, playlistId) {
+        const playlist = this.table.playlists.find((p) => p.id === playlistId);
+        if (!playlist) {
+            console.error(`Playlist with ID ${playlistId} not found`);
+            return;
+        }
+
+        const cipher = this.table.ciphers.find((c) => c.id === cipherId);
+        if (!cipher) {
+            console.error(`Cipher with ID ${cipherId} not found`);
+            return;
+        }
+
+        playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
+        cipher.playlists = cipher.playlists.filter((p) => p !== playlistId);
+        this.updateTable();
+
+        // Delete cipher if it's not in any playlists
+        if (cipher.playlists.length === 0) {
+            this.deleteCipher(cipher);
+        }
+    }
+
+    openPlaylistById(playlistId) {
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+        if (playlist) {
+            this.targetPlaylist = playlist;
+            this.targetPlaylistID = playlistId;
+        }
+        return playlist;
+    }
+
+    getCiphersInPlaylist(playlistId) {
+        const playlist = this.table.playlists.find(p => p.id === playlistId);
+        if (!playlist) {
+            console.error(`Playlist with ID ${playlistId} not found`);
+            return [];
+        }
+
+        const ciphers = [];
+        for (const cipherId of playlist.ciphers) {
+            const cipher = this.table.ciphers.find(c => c.id === cipherId);
+            if (cipher) {
+                ciphers.push(cipher);
+            } else {
+                console.error(`Cipher with ID ${cipherId} not found in playlist ${playlist.title}`);
+            }
+        }
+
+        return ciphers;
+    }
+}
 
 const database = new Database()
 

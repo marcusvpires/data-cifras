@@ -11,6 +11,7 @@
 {
     id: "playlist1",
     title: "My Playlist",
+    settings: { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }
     ciphers: ["cipher1", "cipher2", "cipher3"]
 }
 
@@ -34,7 +35,7 @@ class Database {
 
     constructor(updateUI = (table) => { }, cb = (table) => { }) {
         console.info("Starting database, accessing database through API")
-        browser.storage.local.get("", (res) => {
+        browser.storage.local.get(null, (res) => {
 
             // function called after update the storage
             this.updateUI = updateUI
@@ -46,6 +47,7 @@ class Database {
             this.target = res?.target && this.ciphers.find(c => c.id === res?.target) ? res?.target : null
 
             console.info("API accessed successfully")
+            console.log(`playlists: ${this.playlists.length}, ciphers: ${this.ciphers.length}, target: ${this.target}`)
             cb({ playlists: this.playlists, ciphers: this.ciphers, target: this.target })
         })
     }
@@ -56,16 +58,20 @@ class Database {
         return `${timestamp}wow${random}`;
     }
 
+    setUpadteUi(updateUI) {
+        this.updateUI = updateUI
+    }
+
     save() {
         // If the target cipher no longer exists, the target is removed from it.
-        if (this.ciphers.find(c => c.id === this.target)) this.target = null
+        if (!this.ciphers.find(c => c.id === this.target)) this.target = null
         this.updateUI({ playlists: this.playlists, ciphers: this.ciphers, target: this.target })
         browser.storage.local.set({ playlists: this.playlists, ciphers: this.ciphers, target: this.target });
     }
 
     /* --------------------------------- cipher --------------------------------- */
 
-    createCipher(title, playlists = [], code = "", id = this.createID()) {
+    createCipher(title, playlists = [], code = "", id = this.createID(), settings = { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }) {
 
         // The title is the only constant differential in the system from the input
         // of the user, so it is a required item
@@ -76,7 +82,7 @@ class Database {
             throw new Error("A cipher with this ID aready exixts")
 
         // save the playlist and set the relationship with the playlists table
-        this.ciphers.push({ title, playlists, code, id });
+        this.ciphers.push({ title, playlists, code, id, settings });
         this.addCiphersToPlaylists([id], playlists);
         this.save();
         return id
@@ -98,6 +104,13 @@ class Database {
     updateCipherCode(id, newCode) {
         const cipher = this.ciphers.find(c => c.id === id);
         if (cipher) cipher.code = newCode
+        else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
+        this.save();
+    }
+    
+    updateCipherSettings (id, newSettings) {
+        const cipher = this.ciphers.find(c => c.id === id);
+        if (cipher) cipher.settings = newSettings
         else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
         this.save();
     }
@@ -187,6 +200,3 @@ class Database {
         this.target = id
     }
 }
-
-
-const db = new Database()

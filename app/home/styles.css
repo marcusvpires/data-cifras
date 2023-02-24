@@ -55,7 +55,7 @@ img {
     transition: transform 0.3s;
 }
 
-#controller-toggler {
+#toggleSidebar {
     position: absolute;
     top: 50%;
     translate: 0 -50%;
@@ -71,7 +71,7 @@ img {
     transition: transform 0.3s;
 }
 
-#controller-toggler div {
+#toggleSidebar div {
     transform: rotate(0deg);
     font-size: 27px;
     color: #fff;
@@ -83,7 +83,7 @@ img {
     transform: translateX(-270px);
 }
 
-.hide #controller-toggler div {
+.hide #toggleSidebar div {
     transform: rotate(180deg) !important;
 }
 
@@ -131,7 +131,7 @@ img {
     background-color: black !important;
 }
 
-#decrease-size {
+#decreaseSize {
     font-size: 10px;
     line-height: 16px;
 }
@@ -164,7 +164,7 @@ img {
     padding: 15px !important;
 }
 
-.expanded #controller-toggler {
+.expanded #toggleSidebar {
     transform: translate(250px);
 }
 
@@ -187,12 +187,12 @@ img {
     margin: 0 !important;
 }
 
-#open-db-manager img {
+#openLibrary img {
     height: 14px;
     width: 14px;
 }
 
-#scroll-speed {
+#scrollSpeedInput {
     width: 100%;
 }
 
@@ -256,7 +256,7 @@ img {
     cursor: pointer;
 }
 
-#create-playlist {
+#createPlaylist {
     width: 219px;
 }
 
@@ -267,9 +267,8 @@ img {
     font-family: "Roboto Mono", "Courier New", "Courier", monospace;
     line-height: 1.6;
     font-size: 1.5rem;
-  }
-  
-  .cifra pre b {
-      color: #f90;
-  }
-  
+}
+
+.cifra pre b {
+    color: #f90;
+}

@@ -12,22 +12,22 @@
 
 <body>
     <ul id="controller">
-        <button id="controller-toggler">
+        <button id="toggleSidebar">
             <div>◂</div>
         </button>
         <li class="controller-section">
             <h3 class="controller-section-title">SISTEMA</h3>
-            <button id="open-db-manager">
-                <img src="./public/playlist.svg" alt="list icon">
+            <button id="openLibrary">
+                <img src="../public/playlist.svg" alt="list icon">
                 <span>Minhas listas</span>
             </button>
-            <button id="toggle-playlists">
-                <img src="./public/list-plus.svg" alt="plus icon">
+            <button id="togglePlaylistsChecklist">
+                <img src="../public/list-plus.svg" alt="plus icon">
                 <span>Adcionar à lista</span>
             </button>
             <div id="playlists-bar">
                 <ul id="playlists"> </ul>
-                <button id="create-playlist">
+                <button id="createPlaylist">
                     <span>Nova playlist</span>
                 </button>
             </div>
@@ -35,44 +35,44 @@
         <li class="controller-section">
             <h3 class="controller-section-title">CONFIGURAÇÕES</h3>
             <div class="change-text-size">
-                <button id="decrease-size">
+                <button id="decreaseSize">
                     <span>A</span>
                 </button>
                 <span>Tamanho</span>
-                <button id="increase-size">
+                <button id="increaseSize">
                     <span>A</span>
                 </button>
             </div>
-            <button id="cipher-direction">
-                <img src="./public/column.svg" alt="column icon">
-                <span>Modo coluna</span>
+            <button id="readerMode">
+                <img src="../public/column.svg" alt="column icon">
+                <span>Modo leitura</span>
             </button>
             <button id="toggleTablatura">
-                <img src="./public/spreadsheet.svg" alt="tab icon">
+                <img src="../public/spreadsheet.svg" alt="tab icon">
                 <span>Tablatura</span>
             </button>
         </li>
         <li class="controller-section">
             <h3 class="controller-section-title">AUTO ROLAGEM</h3>
             <div class="scroll">
-                <button id="skip-scroll-backward">
-                    <img src="./public/rewind.svg">
+                <button id="skipScrollBackward">
+                    <img src="../public/rewind.svg">
                 </button>
-                <button id="play-pause-scroll">
-                    <img src="./public/play.svg">
+                <button id="playPauseScroll">
+                    <img src="../public/play.svg">
                 </button>
-                <button id="skip-scroll-forward">
-                    <img src="./public/fast-forward.svg">
+                <button id="skipScrollForward">
+                    <img src="../public/fast-forward.svg">
                 </button>
-                <button id="scroll-speend-display">
-                    <span id="scroll-speend-display">30</span>
+                <button id="scrollSpeedDisplay">
+                    <span>30</span>
                 </button>
             </div>
-            <input id="scroll-speed" type="range" value="30" min="1" max="201" step="1">
+            <input id="scrollSpeedInput" type="range" value="30" min="1" max="201" step="1">
         </li>
     </ul>
     <div class="cifra" id="cifra"></div>
-    <script src="db.js"></script>
+    <script src="../db.js"></script>
     <script src="script.js"></script>
 </body>
 
