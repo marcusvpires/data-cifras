@@ -1,35 +1,41 @@
+/**
+ * Add a click event listener to the browser action icon.
+ * When clicked, retrieve the 'target' value from local storage and 
+ * create a new tab with a URL based on the value.
+ */
 
-// abre data cifras ao clicar no icone
-const openDataCifras = () => browser.tabs.create({ "url": "/app/home/index.html" });
-browser.browserAction.onClicked.addListener(openDataCifras);
+browser.browserAction.onClicked.addListener(() => {
+    browser.storage.local.get('target', res => {
+        const url = res.target ? '/app/home/index.html' : '/app/library/index.html'
+        browser.tabs.create({ "url": url })
+    })
+});
 
+/**
+ * Set the target cipher in local storage and call openDataCifras to open the extension page.
+ * @param {Object} cipher - The cipher object to set as the target cipher.
+ * @throws {Error} Throws an error if the cipher object has no title or id.
+ */
 
 const setTarget = (cipher) => {
-    browser.storage.local.get("", (res) => {
-        const ciphers = res?.ciphers || []
-
-        if (!cipher.id || !cipher.title) throw new Error('Unable to add a target cipher as it has no title or id: ', cipher)
+    browser.storage.local.get("ciphers", (response) => {
+        const ciphers = response?.ciphers || []
         if (!ciphers.find(c => c.id === cipher.id)) ciphers.push(cipher)
-        console.log('Save target', cipher.id)
-        console.log(cipher)
-        browser.storage.local.set({ ciphers, target: cipher.id }, openDataCifras)
+        browser.storage.local.set({ ciphers, target: cipher.id }, () => browser.tabs.create({ "url": '/app/home/index.html' }))
     })
 }
 
-
-// Listen for messages from content script
+// Listen for messages from the content script
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
-        switch (message.type) {
-            case "set_target_cipher":
-                setTarget(message.cipher)
-                break;
-            default:
-                console.error("Unknown message type received");
-                break;
+        console.log("Messages from the content script:", message)
+        if (message.type === "logoURL") sendResponse({ type: "logoURL", logoURL: browser.runtime.getURL("./media/logo-48.png") })
+        else if (message.type === "target") {
+            sendResponse({ message: "Cipher recived" })
+            setTarget(message.cipher)
         }
-        console.log("data cifras: Message received from content script");
     } catch (error) {
         console.error("data cifras: Error occurred in background script", error);
+        console.log("Messages from the content script:", message)
     }
 });

@@ -139,13 +139,15 @@ button {
 #returnToPlaylists {
   font-size: 0.8rem;
   font-weight: BOLD;
-  max-width: 570px;
-  margin: 20px auto 0 120px;
+  margin: 20px 0 0 70px;
   cursor: pointer;
   background-color: unset;
   border: unset;
   padding: unset;
   text-transform: unset;
+  text-align: left;
+  max-width: 570px;
+  width: 100%;
 }
 
 /* ---------------------------------- table --------------------------------- */

@@ -173,7 +173,9 @@ const bevs = {
 
 
 const componentCode = (code, id, settings) => {
+    console.log("Create component", code, id, settings)
     const el = new DOMParser().parseFromString(code, "text/html").querySelector("pre");
+    console.log("Code component:", el)
     el.id = id; el.contentEditable = true; el.removeAttribute("xmlns");
     el.addEventListener('input', handleCode)
     el.style.fontSize = settings.fontSize + 'rem'
@@ -196,7 +198,7 @@ const isCifraChildren = (el) => {
 }
 
 const keypressMap = (ev) => {
-    if (document.fullscreenElement === null || !isCifraChildren(ev.target)) return
+    if (document.fullscreenElement === null) return
     switch (ev.keyCode) {
         case 115: bevs.skipScrollForward(); break;
         case 119: bevs.skipScrollBackward(); break;
@@ -228,7 +230,7 @@ const clickMap = (ev) => {
 
 const main = () => {
     const cipher = db.ciphers.find(c => c.id == db.target)
-    console.log('Load target cipher:', cipher.title)
+    console.log('Load target cipher:', cipher)
     if (!cipher) return
 
     componentCode(cipher.code, cipher.id, cipher.settings)

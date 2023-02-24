@@ -36,8 +36,10 @@ class Database {
 
     save = () => {
         try {
+            console.log(db)
             // Check the validity of the database
             this.validateAndFix();
+            console.log(db.playlists.length, db.ciphers.length)
 
             // Update the UI with the current state of the database
             this.updateUI({
@@ -141,7 +143,7 @@ class Database {
 
     /* --------------------------------- cipher --------------------------------- */
 
-    createCipher = (title, playlists = [], code = " ", id = this.createID(), settings = { fontSize: 1.5, tablatura: false, scrollSpeed: 10 }) => {
+    createCipher = (title, playlists = [], code =  new XMLSerializer().serializeToString(document.createElement('pre')), id = this.createID(), settings = { fontSize: 1.5, tablatura: false, scrollSpeed: 10 }) => {
         if (!title) throw new Error("The title is required to create a new cipher");
         if (this.ciphers.find((cipher) => cipher.id === id)) throw new Error("A cipher with this ID already exists");
         this.ciphers.push({ title, playlists, code, id, settings });
@@ -238,8 +240,7 @@ class Database {
                 }
             }
             if (invalidCiphers.length > 0) {
-                const invalidCipherIds = invalidCiphers.map((cipher) => cipher.id).join(", ");
-                alert(`The following ciphers are not contained in any playlists: ${invalidCipherIds}. They will be deleted from the database.`);
+                invalidCiphers.map((cipher) => cipher.id).join(", ");
                 this.ciphers = this.ciphers.filter((cipher) => !invalidCiphers.includes(cipher));
             }
         }

@@ -28,7 +28,10 @@
                 "*://*.cifraclub.com.br/*"
             ],
             "js": [
-                "content.js"
+                "content_scripts/index.js"
+            ],
+            "css": [
+                "content_scripts/style.css"
             ],
             "run_at": "document_end"
         }
