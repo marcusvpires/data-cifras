@@ -15,7 +15,7 @@ const scrapCode = () => {
     const code = new XMLSerializer().serializeToString(cifra);
 
     const title = prompt("Enter title:", `${name} (${author})`);
-    const settings = { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }
+    const settings = { fontSize: 1.5, tablatura: false, scrollSpeed: 10 }
     if (title) {
       return ({ id: createID(), title, code, settings, playlists: [] })
     } else {

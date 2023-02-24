@@ -73,7 +73,8 @@ nav a:hover {
 
 .logo img {
   height: 30px;
-  width: 30px
+  width: 30px;
+  margin-right: 15px;
 }
 
 .logo a:hover {
@@ -111,7 +112,7 @@ nav a:hover {
   color: var(--color-primary)
 }
 
-.btn {
+button {
   background-color: #6f368F4A;
   color: var(--light-gray);
   border: var(--violet) 1px solid;
@@ -126,7 +127,7 @@ nav a:hover {
   margin: 0 5px
 }
 
-.toolbar-btns {
+.toolbar-buttons {
   display: flex;
   justify-content: left;
   margin: 70px 0 0 70px;
@@ -135,12 +136,11 @@ nav a:hover {
 }
 
 
-.return-to-playlists {
+#returnToPlaylists {
   font-size: 0.8rem;
   font-weight: BOLD;
   max-width: 570px;
-  width: 100%;
-  margin: 20px 0 0 70px;
+  margin: 20px auto 0 120px;
   cursor: pointer;
   background-color: unset;
   border: unset;

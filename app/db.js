@@ -1,199 +1,277 @@
 
-// The storage object is a property of the Database class that represents the data
-// model used in the application
-
-// storage = { playlists: [], ciphers: [], target: id }
-
-// The playlists and ciphers arrays hold the playlists and ciphers added by the user
-
-/* exemple of playlist object
-
-{
-    id: "playlist1",
-    title: "My Playlist",
-    settings: { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }
-    ciphers: ["cipher1", "cipher2", "cipher3"]
-}
-
-/* 
-
-/* exemple of cipher object
-
-{
-    id: "cipher1",
-    title: "My Cipher",
-    code: "Song lyrics with sheet music"
-    playlists: ["playlist1", "playlist2"]
-}
-
-*/
-
-// the target cipher is the current cipher id who will be opened on the home page
-
-
 class Database {
 
-    constructor(updateUI = (table) => { }, cb = (table) => { }) {
-        console.info("Starting database, accessing database through API")
-        browser.storage.local.get(null, (res) => {
-
-            // function called after update the storage
-            this.updateUI = updateUI
-
-            // Retrieve the 'table' key from local storage
-            this.playlists = res?.playlists || []
-            this.ciphers = res?.ciphers || []
-            // the target is only applied if there is a cipher with the target id
-            this.target = res?.target && this.ciphers.find(c => c.id === res?.target) ? res?.target : null
-
-            console.info("API accessed successfully")
-            console.log(`playlists: ${this.playlists.length}, ciphers: ${this.ciphers.length}, target: ${this.target}`)
-            cb({ playlists: this.playlists, ciphers: this.ciphers, target: this.target })
-        })
+    constructor(updateUI = () => { }, cb = () => { }) {
+        this.playlists = [];
+        this.ciphers = [];
+        this.target = null;
+        this.updateUI = updateUI;
+        this.callback = cb;
+        browser.storage.local.get(null, this.loadFromStorage);
     }
 
-    createID() {
+    loadFromStorage = (res) => {
+        this.playlists = res?.playlists || [];
+        this.ciphers = res?.ciphers || [];
+        if (res?.target) {
+            const cipher = this.ciphers.find((c) => c.id === res?.target);
+            if (cipher) this.target = res?.target;
+        }
+        this.callback({
+            playlists: this.playlists,
+            ciphers: this.ciphers,
+            target: this.target,
+        });
+    };
+
+    createID = () => {
         const timestamp = new Date().getTime();
         const random = Math.floor(Math.random() * 1000000);
         return `${timestamp}wow${random}`;
-    }
+    };
 
-    setUpadteUi(updateUI) {
-        this.updateUI = updateUI
-    }
+    setUpadteUi = (updateUI) => {
+        this.updateUI = updateUI;
+    };
 
-    save() {
-        // If the target cipher no longer exists, the target is removed from it.
-        if (!this.ciphers.find(c => c.id === this.target)) this.target = null
-        this.updateUI({ playlists: this.playlists, ciphers: this.ciphers, target: this.target })
-        browser.storage.local.set({ playlists: this.playlists, ciphers: this.ciphers, target: this.target });
+    save = () => {
+        try {
+            // Check the validity of the database
+            this.validateAndFix();
+
+            // Update the UI with the current state of the database
+            this.updateUI({
+                playlists: this.playlists,
+                ciphers: this.ciphers,
+                target: this.target
+            });
+
+            // Save the current state of the database to local storage
+            browser.storage.local.set({
+                playlists: this.playlists,
+                ciphers: this.ciphers,
+                target: this.target
+            });
+        } catch (err) {
+            // If an error occurs, log the error and revert to the previous state of the database
+            alert("Ocorreu um erro ao atualizar os dados");
+            console.error(err);
+            console.log(db.playlists);
+            console.log(db.ciphers);
+            console.log(db.target);
+
+            // Load the previous state of the database from local storage
+            loadFromStorage()
+        }
+    };
+
+
+    validateAndFix() {
+        let valid = true;
+
+        // Check if all cipher IDs are unique
+        const idSet = new Set();
+        for (const cipher of this.ciphers) {
+            if (idSet.has(cipher.id)) {
+                valid = false;
+                const newId = this.createID();
+                console.warn(`Duplicate cipher ID "${cipher.id}" found. Changing ID to "${newId}"`);
+                cipher.id = newId;
+            } else {
+                idSet.add(cipher.id);
+            }
+        }
+
+        // Check if all playlist IDs are unique
+        const playlistIdSet = new Set();
+        for (const playlist of this.playlists) {
+            if (playlistIdSet.has(playlist.id)) {
+                valid = false;
+                const newId = this.createID();
+                console.warn(`Duplicate playlist ID "${playlist.id}" found. Changing ID to "${newId}"`);
+                playlist.id = newId;
+            } else {
+                playlistIdSet.add(playlist.id);
+            }
+        }
+
+        // Check if all cipher IDs in playlists are valid
+        for (const playlist of this.playlists) {
+            playlist.ciphers = playlist.ciphers.filter(cipherId => {
+                const found = this.ciphers.find(cipher => cipher.id === cipherId);
+                if (!found) {
+                    console.warn(`Invalid cipher ID "${cipherId}" found in playlist "${playlist.title}". Removing from playlist.`);
+                    valid = false;
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        // Check if all playlist IDs in ciphers are valid
+        for (const cipher of this.ciphers) {
+            cipher.playlists = cipher.playlists.filter(playlistId => {
+                const found = this.playlists.find(playlist => playlist.id === playlistId);
+                if (!found) {
+                    console.warn(`Invalid playlist ID "${playlistId}" found in cipher "${cipher.title}". Removing from cipher.`);
+                    valid = false;
+                    return false;
+                }
+                return true;
+            });
+        }
+
+        // Check if target cipher ID is valid
+        if (this.target) {
+            const found = this.ciphers.find(cipher => cipher.id === this.target);
+            if (!found) {
+                console.warn(`Invalid target cipher ID "${this.target}" found. Clearing target.`);
+                valid = false;
+                this.target = null;
+            }
+        }
+
+        if (!valid) {
+            console.warn("Database validation failed. Attempting to fix errors.");
+            this.save();
+        }
+
+        return valid;
     }
 
     /* --------------------------------- cipher --------------------------------- */
 
-    createCipher(title, playlists = [], code = "", id = this.createID(), settings = { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }) {
-
-        // The title is the only constant differential in the system from the input
-        // of the user, so it is a required item
-        if (!title) throw new Error("The title is required to create a new cipher")
-
-        // Check if a cipher with this ID aready exists
-        if (this.ciphers.find(cipher => cipher.id === id))
-            throw new Error("A cipher with this ID aready exixts")
-
-        // save the playlist and set the relationship with the playlists table
+    createCipher = (title, playlists = [], code = " ", id = this.createID(), settings = { fontSize: 1.5, tablatura: false, scrollSpeed: 10 }) => {
+        if (!title) throw new Error("The title is required to create a new cipher");
+        if (this.ciphers.find((cipher) => cipher.id === id)) throw new Error("A cipher with this ID already exists");
         this.ciphers.push({ title, playlists, code, id, settings });
         this.addCiphersToPlaylists([id], playlists);
         this.save();
-        return id
-    }
+        return id;
+    };
 
-    renameCiphers(cipherIds, newTitle) {
-        // The title is the only constant differential in the system from the input
-        // of the user, so it is a required item
-        if (!newTitle) throw new Error("The title is required to create a new cipher")
-
+    renameCiphers = (cipherIds, newTitle) => {
+        if (!newTitle) throw new Error("The title is required to create a new cipher");
         cipherIds.forEach((id, i) => {
-            const cipher = this.ciphers.find(c => c.id === id);
-            // rename multiple ciphers with an index to prevent same title
-            if (cipher) cipher.title = i === 0 ? newTitle : `${newTitle} (${i})`;;
-        })
+            const cipher = this.ciphers.find((c) => c.id === id);
+            if (cipher) cipher.title = i === 0 ? newTitle : `${newTitle} (${i})`;
+        });
         this.save();
+    };
+
+    updateCipherCode = (id, newCode) => {
+        const cipher = this.ciphers.find((c) => c.id === id);
+        if (cipher) cipher.code = newCode;
+        else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`);
+        this.save();
+    };
+
+    updateCipherSettings = (id, newSettings) => {
+        const cipher = this.ciphers.find((c) => c.id === id);
+        if (cipher) cipher.settings = newSettings;
+        else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`);
+        this.save();
+    };
+
+    getCipherSettings(id) {
+        return db.ciphers.find(c => c.id === db.target).settings || { fontSize: 1.5, tablatura: true, scrollSpeed: 10 }
     }
 
-    updateCipherCode(id, newCode) {
-        const cipher = this.ciphers.find(c => c.id === id);
-        if (cipher) cipher.code = newCode
-        else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
-        this.save();
-    }
-
-    updateCipherSettings(id, newSettings) {
-        const cipher = this.ciphers.find(c => c.id === id);
-        if (cipher) cipher.settings = newSettings
-        else throw new Error(`Unable to update cipher ${id} code because the cipher with that id does not exist`)
-        this.save();
-    }
-
-    deleteCiphers(Ids) {
+    deleteCiphers = (Ids) => {
         for (const id of Ids) {
-            // Filter out the cipher with this ID from the "ciphers" array in the table
             this.ciphers = this.ciphers.filter((c) => c.id !== id);
-            // Filter out the cipher with this ID from the "ciphers" array in the playlist
-            this.playlists = this.playlists.map(p => {
-                p.ciphers = p.ciphers.filter((c) => c !== id)
-                return p
-        })
+            this.playlists = this.playlists.map((p) => {
+                p.ciphers = p.ciphers.filter((c) => c !== id);
+                return p;
+            });
         }
         this.save();
-    }
+    };
 
     /* -------------------------------- playlist -------------------------------- */
 
     createPlaylist(title, ciphers = [], id = this.createID()) {
-
-        // The title is the only constant differential in the system from the input
-        // of the user, so it is a required item
-        if (!title) throw new Error("The title is required to create a new cipher")
-
-        // Check if a playlist with this ID aready exists
-        if (this.playlists.find(p => p.id === id)) throw new Error("A playlist with this ID aready exixts")
-
-        this.playlists.push({ title, ciphers: ciphers, id: id });
-        this.addCiphersToPlaylists(ciphers, [id])
+        if (!title) throw new Error("The title is required to create a new cipher");
+        if (this.playlists.find(p => p.id === id)) throw new Error("A playlist with this ID already exists");
+        this.playlists.push({ title, ciphers, id });
+        this.addCiphersToPlaylists(ciphers, [id]);
         this.save();
         return id;
     }
 
     renamePlaylists(playlistIds, newTitle) {
-        if (!newTitle) throw new Error("The title is required to create a new cipher")
+        if (!newTitle) throw new Error("The title is required to create a new cipher");
         playlistIds.forEach((id, i) => {
             this.playlists = this.playlists.map(p => {
                 if (p.id === id) p.title = i === 0 ? newTitle : `${newTitle} (${i})`;
-                return p
+                return p;
             });
-        })
+        });
         this.save();
     }
 
-    deletePlaylists(Ids) {
-        for (const id of Ids) {
-            this.playlists = this.playlists.filter((p) => p.id !== id);
-            this.ciphers = this.ciphers.map(c => {
-                c.playlists = c.playlists.filter((p) => p !== id)
-                return c
-            })
+    deletePlaylists = (playlistIds) => {
+        const removedCiphers = new Set();
+        this.playlists = this.playlists.filter((playlist) => {
+            if (playlistIds.includes(playlist.id)) {
+                playlist.ciphers.forEach((cipherId) => {
+                    const cipherIndex = this.ciphers.findIndex((cipher) => cipher.id === cipherId);
+                    if (cipherIndex !== -1) {
+                        const cipher = this.ciphers[cipherIndex];
+                        cipher.playlists = cipher.playlists.filter((playlistId) => playlistId !== playlist.id);
+                        if (cipher.playlists.length === 0 && cipher.id !== this.target) {
+                            removedCiphers.add(cipher);
+                            this.ciphers.splice(cipherIndex, 1);
+                        }
+                    }
+                });
+                return false;
+            }
+            return true;
+        });
+
+        if (removedCiphers.size > 0) {
+            const invalidCiphers = [];
+            for (const cipher of removedCiphers) {
+                if (!this.playlists.some((playlist) => playlist.ciphers.includes(cipher.id))) {
+                    invalidCiphers.push(cipher);
+                }
+            }
+            if (invalidCiphers.length > 0) {
+                const invalidCipherIds = invalidCiphers.map((cipher) => cipher.id).join(", ");
+                alert(`The following ciphers are not contained in any playlists: ${invalidCipherIds}. They will be deleted from the database.`);
+                this.ciphers = this.ciphers.filter((cipher) => !invalidCiphers.includes(cipher));
+            }
         }
+
         this.save();
-    }
+    };
 
     /* ------------------------ many to many relationship ----------------------- */
 
-    // for each playlist ID, add the cipher to the playlist
     addCiphersToPlaylists(cipherIds, playlistIds) {
         for (const cipherId of cipherIds) {
             const cipher = this.ciphers.find(c => c.id === cipherId);
             if (!cipher) {
-                console.error(`Cipher with id '${cipherId}' does not exist`)
+                console.error(`Cipher with id '${cipherId}' does not exist`);
                 continue;
             }
             for (const playlistId of playlistIds) {
                 const playlist = this.playlists.find(p => p.id === playlistId);
                 if (!playlist) {
-                    console.error(`Playlist with id '${playlistId}' does not exist`)
+                    console.error(`Playlist with id '${playlistId}' does not exist`);
                     continue;
                 }
                 if (!playlist.ciphers.includes(cipherId)) playlist.ciphers.push(cipherId);
                 if (!cipher.playlists.includes(playlistId)) cipher.playlists.push(playlistId);
             }
         }
-        this.save()
+        this.save();
     }
 
     getCiphersInPlaylist(playlistId) {
         const playlist = this.playlists.find(p => p.id === playlistId);
         if (!playlist) throw new Error(`Unable to find playlist with id: ${playlistId}`);
-
         return playlist.ciphers.map(cipherId => {
             const cipher = this.ciphers.find(c => c.id === cipherId);
             if (!cipher) throw new Error(`Unable to find cipher with id: ${cipherId}`);
@@ -201,28 +279,23 @@ class Database {
         });
     }
 
-    // Remove a cipher from a playlist
     removeCiphersFromPlaylists(cipherIds, playlistIds) {
         for (const cipherId of cipherIds) {
             const cipher = this.ciphers.find(c => c.id === cipherId);
             for (const playlistId of playlistIds) {
-                const playlist = this.playlists.find((p) => p.id === playlistId);
-                playlist.ciphers = playlist.ciphers.filter((c) => c !== cipherId);
-                cipher.playlists = cipher.playlists.filter((p) => p !== playlistId);
+                const playlist = this.playlists.find(p => p.id === playlistId);
+                playlist.ciphers = playlist.ciphers.filter(c => c !== cipherId);
+                cipher.playlists = cipher.playlists.filter(p => p !== playlistId);
             }
             if (cipher.playlists.length === 0 && cipher.id !== this.target) this.deleteCipher(cipher);
-
         }
     }
 
     /* --------------------------------- target --------------------------------- */
 
     setTarget(title, code = '', playlists = [], id = this.createID()) {
-        // The title is the only constant differential in the system from the input
-        // of the user, so it is a required item
-        if (!title) throw new Error("The title is required to create a new cipher")
-
-        if (!this.ciphers.find(cipher => cipher.id === id)) this.createCipher(title, playlists, code, id)
-        this.target = id
+        if (!title) throw new Error("The title is required to create a new cipher");
+        if (!this.ciphers.find(cipher => cipher.id === id)) this.createCipher(title, playlists, code, id);
+        this.target = id;
     }
 }
