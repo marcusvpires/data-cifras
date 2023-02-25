@@ -12,7 +12,7 @@
 
 const handleButton = () => {
   try {
-    const title = prompt("Enter title:", `${document.querySelector(".t1").innerText} (${document.querySelector(".t3").innerText})`);
+    const title = prompt("Escreva um titulo:", `${document.querySelector(".t1").innerText} (${document.querySelector(".t3").innerText})`);
 
     const cipher = {
       code: new XMLSerializer().serializeToString(document.querySelector(".cifra_cnt > pre")),
@@ -22,10 +22,10 @@ const handleButton = () => {
       title: title,
     }
 
-    console.log('Successfully created cipher object:', cipher)
+    // console.log('Successfully created cipher object:', cipher)
     browser.runtime.sendMessage({ type: "target", cipher }).then(handleResponse, handleError);
   } catch (error) {
-    console.error("Error occurred while sending target cipher to background script", error);
+    // console.error("Error occurred while sending target cipher to background script", error);
   }
 }
 
@@ -36,10 +36,10 @@ const handleButton = () => {
 
 
 const renderButton = (imageUrl) => {
-  console.log("Creating button with URL:", imageUrl)
+  // console.log("Creating button with URL:", imageUrl)
   const menu = document.querySelector("#side-menu ul li");
   if (!menu) {
-    console.warn("Unable to create Data Cifras logo: menu not found");
+    // console.warn("Unable to create Data Cifras logo: menu not found");
     return;
   }
 
@@ -62,7 +62,7 @@ const renderButton = (imageUrl) => {
 
   // Append button to menu element
   menu.appendChild(button);
-  console.log("Data Cifras button created");
+  // console.log("Data Cifras button created");
 };
 
 /* -------------------------------------------------------------------------- */
@@ -71,13 +71,13 @@ const renderButton = (imageUrl) => {
 
 const handleError = (error) => console.log(`Error on comunicate with background: ${error}`);
 const handleResponse = (message) => {
-  console.log("Recive message from background", message)
+  // console.log("Recive message from background", message)
   if (message.type === 'logoURL') renderButton(message.logoURL)
-  else console.log("Background message", message)
+  // else console.log("Background message", message)
 }
 
 const main = (e) => browser.runtime.sendMessage({ type: "logoURL"}).then(handleResponse, handleError);
 
-
+// Run the main function on load and on change location url
 window.addEventListener('locationchange', main);
 main()
