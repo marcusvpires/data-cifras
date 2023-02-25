@@ -1,26 +1,57 @@
 
 # Data cifras
 
-Extensão para chrome e firefox que serve como uma extensão ao [cifra club](https://www.cifraclub.com.br). A Data cifra permite que você salve, edite e categorize as cifras, além de trazer várias ferramentas que ajudam a visualizar toda a cifra em quanto toca a musica.
+Extensão para Chrome e Firefox que serve como uma extensão ao [cifra club](https://www.cifraclub.com.br). A Data cifra permite que você salve, edite e categorize as cifras, além de trazer várias ferramentas que ajudam a visualizar toda a cifra em quanto toca a musica.
+
+<br>
+
+### Utilize o botão acionado no menu mais a esquerda extrair a cifra do cifra club
 
 ![](media\screenshot\button.png)
 
+<br>
+
+### Edite a cifra de acordo com as suas preferências e utilize o funcionalidades do menu
+
 ![](media\screenshot\edicao.png)
 
+<br>
+
+### No modo leitura fica mais fácil de visualizar a cifra em tela cheia e navegar pelo texto. Nesse modo, é possível controlar toda a visualização a partir de atalhos de teclado.
+
 ![](media\screenshot\tela-cheia.png)
+
+<br>
+
+### Adicione as cifras em playlists customizadas e gerencie as playlists e as cifras
 
 ![](media\screenshot\modo-coluna.png)
 
 ![](media\screenshot\tabela.png)
 
-## Database
+<br>
 
-The database system is a JavaScript implementation of a simple relational database that stores two types of objects: playlists and ciphers.
+# "Banco de dados" 😎
 
-A "cipher" is an object with a unique identifier (id) and a name (title). A "playlist" is an object with a unique identifier (id), a name (title), and a list of ciphers that belong to the playlist.
+O sistema de banco de dados é uma implementação JavaScript de um sistema relacional básico que armazena dois tipos de objetos: playlists e ciphers. Os dados são armazenados diretamente na API de armazenamento da extenção ``browser.storage.local`` e o "relacionamento" entre as tabelas é um array de id que corresponde ao ID da outra tabela.
 
-The database has several methods that allow for adding, updating, and deleting playlists and ciphers. For example, there are methods to create a new cipher, update a cipher's name, delete one or more ciphers, create a new playlist, update a playlist's name, and delete one or more playlists.
+Em um exemplo, esse sistema many-to-many funciona da seguinte forma: ao adicionar uma cifra em uma playlists, o id da playlist é adicionado no objeto cifra em playlists: []. Da mesma forma que o id da cifra é adcionado no objeto playlist em ciphers: [].
 
-The addCipherToPlaylist method allows for adding a cipher to a playlist, while the removeCipherFromPlaylist method removes a cipher from a playlist. The removeCipherFromPlaylist method also checks if the cipher is not in any other playlists, and if it's not, it deletes the cipher from the database.
+Com o objetivo de evitar bugs no banco de dados, todas as alterações são feitas em variáveis locais que correspondem a uma cópia do armazenamento original carregadas ao construir a classe ``this.ciphers; this.playlists; this.target``. Sempre que a alteração é completa (ex: createCipher()), os dados passam por uma verificação dos tipos dos dados e o relacionamento entre as tabelas. No caso dos dados não passarem na verificação ou no caso de algum erro inesperado, o sistema retorna carrega os ultimos dados salvos na API do browser e reinicia a classe.
 
-The database system is implemented using the WebExtension API's browser.storage.local feature, which allows for storing and retrieving data in the browser's local storage. The database system retrieves the database table from the local storage in the constructor and saves any changes made to the table back to the local storage using the saveTable method.
+```
+playlist = {
+   id: uniqueString
+   title: string
+   ciphers: id[]
+}
+cipher = {
+   id: uniqueString
+   title: string
+   code: string
+   playlists: id[]
+   settings: { fontSize: float, tablatura: boolean, scrollSpeed: int }
+}
+target = cipher id
+```
+

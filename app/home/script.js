@@ -50,7 +50,7 @@ const updatePlaylistsChecklist = () => {
 /* -------------------------------------------------------------------------- */
 
 const handleCode = ev => {
-    const newCode = new XMLSerializer().serializeToString(ev.target);
+    const newCode = new XMLSerializer().serializeToString(document.querySelector("#cifra pre"));
     db.updateCipherCode(db.target, newCode)
 }
 
@@ -95,7 +95,7 @@ const updateFontSize = (rate) => {
     let settings = db.getCipherSettings(db.target);
     settings.fontSize += rate;
     // prevent to set an invald number
-    if (Numeber(settings.fontSize) < 0.1) settings.fontSize = 0.1
+    if ((settings.fontSize) < 0.1) settings.fontSize = 0.1
     db.updateCipherSettings(db.target, settings);
     document.querySelector("#cifra pre").style.fontSize = settings.fontSize + "rem";
 }
@@ -108,6 +108,7 @@ const buttonEvents = {
     toggleSidebar: () => {
         let controller = document.getElementById('controller');
         controller.classList.toggle('hide');
+        controller.classList.remove('expanded');
     },
 
     // Function to navigate to the library page
@@ -126,8 +127,8 @@ const buttonEvents = {
         if (title) db.createPlaylist(title);
     },
 
-    decreaseSize: () => updateFontSize(-1),
-    increaseSize: () => updateFontSize(1),
+    decreaseSize: () => updateFontSize(-0.1),
+    increaseSize: () => updateFontSize(0.1),
 
     // Changes the visibility of the tablatures
     // The tablatures are tables made from characters that inform a sequence of notes to be played
@@ -183,21 +184,85 @@ const buttonEvents = {
     readerMode: () => {
         const btn = document.getElementById('readerMode').classList
         const pre = document.querySelector('#cifra pre')
+        const help = document.getElementById("help")
         if (btn.contains('checked')) {
             btn.remove("checked")
             pre.contentEditable = true
             pre.style.userSelect = 'auto'
+            help.style.display = 'block'
             document.exitFullscreen()
         } else {
             pre.contentEditable = false
             pre.style.userSelect = 'none'
+            help.style.display = 'none'
             btn.add("checked")
             document.querySelector('body').requestFullscreen()
         }
 
+    },
+    help: () => {
+        alert(`
+Atalhos de teclado para utilizar as funcionalidades:
+
+
+    Durante a edição da cifra:
+
+        Use "Ctrl + B" para colocar o texto selecionado em negrito.
+
+
+    No modo de leitura:
+
+    Utilize as setas do teclado para:
+        Para cima: rolar a tela para cima.
+        Para baixo: rolar a tela para baixo.
+        Para a direita: aumentar o tamanho da letra.
+        Para a esquerda: diminuir o tamanho da letra.
+
+    Utilize as teclas localizadas à direita do teclado para:
+        "Q": voltar para o início.
+        "E": tocar/pausar a rolagem automática.
+        "W": rolar a tela para cima.
+        "S": rolar a tela para baixo.
+        "D": aumentar o tamanho da letra.
+        "A": diminuir o tamanho da letra.
+    
+    Para rolar a cifra, clique em qualquer parte da cifra para:
+        1 vez: descer
+        2 vezes: subir 
+        3 vezes: voltar ao início
+    Para cancelar, clique quatro vezes em qualquer lugar da cifra.
+`)
     }
 }
 
+/* -------------------------------------------------------------------------- */
+/*                              rich text editor                              */
+/* -------------------------------------------------------------------------- */
+
+const toggleBold = () => {
+    const selection = window.getSelection();
+    console.log(selection)
+    if (!selection) return
+    else if (selection.anchorNode?.parentElement.tagName === 'B') {
+        const parent = selection.anchorNode.parentElement
+        console.log("Remove bold:", parent.innerText)
+        parent.insertAdjacentText('beforebegin', parent.innerText)
+        parent.remove()
+    } else if (selection.getRangeAt(0).commonAncestorContainer.tagName === 'B') {
+        const range = selection.getRangeAt(0).commonAncestorContainer
+        range.insertAdjacentText('beforebegin', range.innerText)
+        console.log("Remove range:", range)
+        range.remove()
+    } else {
+        console.log("Create bold component")
+        const element = document.createElement('b')
+        selection.getRangeAt(0).surroundContents(element)
+        const text = element.innerText
+        element.innerText = ''
+        element.innerText = text
+    }
+    handleCode()
+}
 
 /* -------------------------------------------------------------------------- */
 /*                           components constructor                           */
@@ -217,6 +282,12 @@ const constructor = (code, id, settings) => {
     pre.id = id; pre.contentEditable = true; pre.removeAttribute("xmlns");
     pre.addEventListener('input', handleCode)
     pre.style.fontSize = settings.fontSize + 'rem'
+    pre.addEventListener('keydown', (event) => {
+        if (event.ctrlKey && event.key === 'b') {
+            event.preventDefault(); // prevent the default behavior of the key combination
+            toggleBold();
+        }
+    });
     document.querySelector("#cifra").appendChild(pre)
     if (settings.tablatura) {
         document.getElementById("toggleTablatura").classList.add("checked")
@@ -237,8 +308,7 @@ const isCifraChildren = (element) => {
 }
 
 const scrollToTop = () => {
-    const componentTop = document.getElementById("cifra").getBoundingClientRect().top + window.pageYOffset;
-    window.scrollTo({ top: componentTop, behavior: 'smooth' });
+    document.getElementById("cifra").scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 const keypressMap = (keyEvent) => {
@@ -250,7 +320,7 @@ const keypressMap = (keyEvent) => {
         case 'KeyD': buttonEvents.increaseSize(); break;
         case 'KeyA': buttonEvents.decreaseSize(); break;
         case 'KeyE': buttonEvents.playPauseScroll(); break;
-        case 'KeyQ': buttonEvents.scrollToTop(); break;
+        case 'KeyQ': scrollToTop(); break;
         case 'ArrowUp': buttonEvents.skipScrollBackward(); break;
         case 'ArrowDown': buttonEvents.skipScrollBackward(); break;
         case 'ArrowLeft': buttonEvents.decreaseSize(); break;
@@ -302,7 +372,7 @@ const clickMap = (clickEvent) => {
 const main = () => {
     // This code aims to find a target cipher in the database by its id
     // The found cipher is stored in the 'target' variable
-    const target = db.targets.find(c => c.id == db.target)
+    const target = db.ciphers.find(c => c.id == db.target)
     // console.log('Load target cipher:', target)
     if (!target) return
 

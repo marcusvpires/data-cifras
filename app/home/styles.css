@@ -131,7 +131,7 @@ img {
     height: 100vh;
     width: 100vw;
     overflow: auto;
-  }
+}
 
 .controller-section button.checked {
     background-color: black !important;
@@ -165,13 +165,13 @@ img {
 }
 
 .expanded #playlists-bar {
-    right: -251px !important;
-    width: 250px !important;
+    right: -321px !important;
+    width: 320px !important;
     padding: 15px !important;
 }
 
 .expanded #toggleSidebar {
-    transform: translate(250px);
+    transform: translate(320px);
 }
 
 .scroll {
@@ -263,7 +263,7 @@ img {
 }
 
 #createPlaylist {
-    width: 219px;
+    justify-content: center;
 }
 
 #cifra pre {
@@ -287,40 +287,63 @@ img {
         display: flex;
         flex-direction: column;
     }
+
     #toggleSidebar {
-      right: 0;
-      left: unset;
-      top: 0;
-      translate: 0 0;
-      border-radius: 0 0 0 3px;
-      width: 50px;
-      height: 40px;
+        right: 0;
+        left: unset;
+        top: 0;
+        translate: 0 0;
+        border-radius: 0 0 0 3px;
+        width: 50px;
+        height: 40px;
     }
+
     #controller.hide #toggleSidebar {
-        right: -40px !important;;
+        right: -40px !important;
+        ;
         width: 40px;
         height: 55px;
         border-radius: 0 0 3px 0;
     }
+
     #controller.hide {
-      transform: translateX(-100%);
+        transform: translateX(-100%);
     }
+
     #cifra pre {
         min-width: 80px;
     }
+
     .expanded #playlists-bar {
-      right:  0 !important;
-      width:  100vw !important;
-      padding: 30px !important;
-      z-index: 999;
+        right: 0 !important;
+        width: 100vw !important;
+        padding: 30px !important;
+        z-index: 999;
     }
+
     .expanded #toggleSidebar {
-      transform: translate(0px);
-      z-index: 1000;
+        transform: translate(0px);
+        z-index: 1000;
     }
+
     .controller-section button {
-        margin: 10px 0; 
+        margin: 10px 0;
     }
- }
-  
-  
+}
+
+
+#help {
+    height: 40px;
+    width: 40px;
+    position: absolute;
+    right: 30px;
+    bottom: 20px;
+    border-radius: 50%;
+    background-color: #7a527d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 21px;
+    font-weight: 600;
+    padding-bottom: 2px;
+}

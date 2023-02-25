@@ -39,8 +39,8 @@ const bevs = {
         else if (ids && table === "ciphers") db.deleteCiphers(ids)
         else throw new Error('Unknow table:', table)
     },
-    open: () => {
-        const id = getCheckedRows()[0]
+    open: (id) => {
+        if (typeof id !== "string") id = getCheckedRows()[0]
         if (table === "playlists" && id) {
             crrPlaylistID = id
             updateLayout('ciphers')
@@ -83,6 +83,7 @@ const createRow = (id, title, ciphers = null) => {
         tr.appendChild(tdCifras);
     }
     tr.addEventListener('click', () => checkbox.checked = !checkbox.checked)
+    tr.addEventListener('dblclick', () => bevs.open(id))
 
     return tr;
 }
@@ -108,7 +109,7 @@ const updateLayout = (newTable) => {
         document.getElementById('returnToPlaylists').style.display = 'none'
         document.getElementById('ciphersNum').style.display = 'inline-grid'
     } else if (newTable === "ciphers") {
-        document.getElementById('title').textContent = "CIFRAS";
+        document.getElementById('title').textContent = db.playlists.find(p => p.id === crrPlaylistID).title;
         document.getElementById('newItem').textContent = 'Nova cifra';
         document.getElementById('title-head').textContent = "Cifras"
 

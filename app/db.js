@@ -1,12 +1,12 @@
 
 class Database {
 
-    constructor(updateUI = () => { }, cb = () => { }) {
+    constructor(updateUI = () => { }, callback = () => { }) {
         this.playlists = [];
         this.ciphers = [];
         this.target = null;
         this.updateUI = updateUI;
-        this.callback = cb;
+        this.callback = callback;
         browser.storage.local.get(null, this.loadFromStorage);
     }
 

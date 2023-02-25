@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Rich Text System</title>
+    <style>
+      .bold {
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div contenteditable="true" id="editor">
+      Type some text here...
+    </div>
+
+    <script>
+      const editor = document.getElementById('editor');
+
+      editor.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'b') {
+          event.preventDefault(); // prevent the default behavior of the key combination
+          toggleBold();
+        }
+      });
+
+      function toggleBold() {
+        const selection = window.getSelection();
+        const range = selection.getRangeAt(0);
+        const currentElement = range.commonAncestorContainer.parentElement;
+
+        if (currentElement.classList.contains('bold')) {
+          // remove bold formatting
+          currentElement.classList.remove('bold');
+        } else {
+          // add bold formatting
+          const newElement = document.createElement('b');
+          range.surroundContents(newElement);
+        }
+      }
+    </script>
+  </body>
+</html>
