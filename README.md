@@ -7,27 +7,27 @@ Extensão para Chrome e Firefox que serve como uma extensão ao [cifra club](htt
 
 ### Utilize o botão acionado no menu mais a esquerda extrair a cifra do cifra club
 
-![](media\screenshot\button.png)
+![](media/screenshot/button.png)
 
 <br>
 
 ### Edite a cifra de acordo com as suas preferências e utilize o funcionalidades do menu
 
-![](media\screenshot\edicao.png)
+![](media/screenshot/edicao.png)
 
 <br>
 
 ### No modo leitura fica mais fácil de visualizar a cifra em tela cheia e navegar pelo texto. Nesse modo, é possível controlar toda a visualização a partir de atalhos de teclado.
 
-![](media\screenshot\tela-cheia.png)
+![](media/screenshot/tela-cheia.png)
 
 <br>
 
 ### Adicione as cifras em playlists customizadas e gerencie as playlists e as cifras
 
-![](media\screenshot\modo-coluna.png)
+![](media/screenshot/modo-coluna.png)
 
-![](media\screenshot\tabela.png)
+![](media/screenshot/tabela.png)
 
 <br>
 
