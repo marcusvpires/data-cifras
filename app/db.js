@@ -36,10 +36,10 @@ class Database {
 
     save = () => {
         try {
-            console.log(db)
+            // console.log(db)
             // Check the validity of the database
             this.validateAndFix();
-            console.log(db.playlists.length, db.ciphers.length)
+            // console.log(db.playlists.length, db.ciphers.length)
 
             // Update the UI with the current state of the database
             this.updateUI({
@@ -57,10 +57,10 @@ class Database {
         } catch (err) {
             // If an error occurs, log the error and revert to the previous state of the database
             alert("Ocorreu um erro ao atualizar os dados");
-            console.error(err);
-            console.log(db.playlists);
-            console.log(db.ciphers);
-            console.log(db.target);
+            // console.error(err);
+            // console.log(db.playlists);
+            // console.log(db.ciphers);
+            // console.log(db.target);
 
             // Load the previous state of the database from local storage
             loadFromStorage()
@@ -77,7 +77,7 @@ class Database {
             if (idSet.has(cipher.id)) {
                 valid = false;
                 const newId = this.createID();
-                console.warn(`Duplicate cipher ID "${cipher.id}" found. Changing ID to "${newId}"`);
+                // console.warn(`Duplicate cipher ID "${cipher.id}" found. Changing ID to "${newId}"`);
                 cipher.id = newId;
             } else {
                 idSet.add(cipher.id);
@@ -90,7 +90,7 @@ class Database {
             if (playlistIdSet.has(playlist.id)) {
                 valid = false;
                 const newId = this.createID();
-                console.warn(`Duplicate playlist ID "${playlist.id}" found. Changing ID to "${newId}"`);
+                // console.warn(`Duplicate playlist ID "${playlist.id}" found. Changing ID to "${newId}"`);
                 playlist.id = newId;
             } else {
                 playlistIdSet.add(playlist.id);
@@ -102,7 +102,7 @@ class Database {
             playlist.ciphers = playlist.ciphers.filter(cipherId => {
                 const found = this.ciphers.find(cipher => cipher.id === cipherId);
                 if (!found) {
-                    console.warn(`Invalid cipher ID "${cipherId}" found in playlist "${playlist.title}". Removing from playlist.`);
+                    // console.warn(`Invalid cipher ID "${cipherId}" found in playlist "${playlist.title}". Removing from playlist.`);
                     valid = false;
                     return false;
                 }
@@ -115,7 +115,7 @@ class Database {
             cipher.playlists = cipher.playlists.filter(playlistId => {
                 const found = this.playlists.find(playlist => playlist.id === playlistId);
                 if (!found) {
-                    console.warn(`Invalid playlist ID "${playlistId}" found in cipher "${cipher.title}". Removing from cipher.`);
+                    // console.warn(`Invalid playlist ID "${playlistId}" found in cipher "${cipher.title}". Removing from cipher.`);
                     valid = false;
                     return false;
                 }
@@ -127,14 +127,14 @@ class Database {
         if (this.target) {
             const found = this.ciphers.find(cipher => cipher.id === this.target);
             if (!found) {
-                console.warn(`Invalid target cipher ID "${this.target}" found. Clearing target.`);
+                // console.warn(`Invalid target cipher ID "${this.target}" found. Clearing target.`);
                 valid = false;
                 this.target = null;
             }
         }
 
         if (!valid) {
-            console.warn("Database validation failed. Attempting to fix errors.");
+            // console.warn("Database validation failed. Attempting to fix errors.");
             this.save();
         }
 
@@ -254,13 +254,13 @@ class Database {
         for (const cipherId of cipherIds) {
             const cipher = this.ciphers.find(c => c.id === cipherId);
             if (!cipher) {
-                console.error(`Cipher with id '${cipherId}' does not exist`);
+                // console.error(`Cipher with id '${cipherId}' does not exist`);
                 continue;
             }
             for (const playlistId of playlistIds) {
                 const playlist = this.playlists.find(p => p.id === playlistId);
                 if (!playlist) {
-                    console.error(`Playlist with id '${playlistId}' does not exist`);
+                    // console.error(`Playlist with id '${playlistId}' does not exist`);
                     continue;
                 }
                 if (!playlist.ciphers.includes(cipherId)) playlist.ciphers.push(cipherId);
@@ -293,6 +293,15 @@ class Database {
     }
 
     /* --------------------------------- target --------------------------------- */
+
+    /**
+     * Save the target onthe storage and if the cipher not exist, it create thi cipher
+     * 
+     * @param {string} code matches a pre element in HTML 
+     * @param {string} id need to be unique
+     * @param {array} playlists 
+     * @param {string} title 
+     */
 
     setTarget(title, code = '', playlists = [], id = this.createID()) {
         if (!title) throw new Error("The title is required to create a new cipher");

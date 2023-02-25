@@ -28,14 +28,14 @@ const setTarget = (cipher) => {
 // Listen for messages from the content script
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
     try {
-        console.log("Messages from the content script:", message)
+        // console.log("Messages from the content script:", message)
         if (message.type === "logoURL") sendResponse({ type: "logoURL", logoURL: browser.runtime.getURL("./media/logo-48.png") })
         else if (message.type === "target") {
             sendResponse({ message: "Cipher recived" })
             setTarget(message.cipher)
         }
     } catch (error) {
-        console.error("data cifras: Error occurred in background script", error);
-        console.log("Messages from the content script:", message)
+        // console.error("data cifras: Error occurred in background script", error);
+        // console.log("Messages from the content script:", message)
     }
 });

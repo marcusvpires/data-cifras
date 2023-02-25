@@ -27,7 +27,7 @@ const bevs = {
     },
     rename: () => {
         const ids = getCheckedRows()
-        console.log(ids)
+        // console.log(ids)
         var title = prompt("Digite um nome")
         if (title && table === "playlists") db.renamePlaylists(ids, title)
         else if (title && table === "ciphers") db.renameCiphers(ids, title)
